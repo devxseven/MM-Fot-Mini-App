@@ -50,7 +50,67 @@
 <body class="p-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
 
-    <script src="app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.BackButton.hide();
+
+        const now = moment.tz("Asia/Yangon");
+
+        fetch("https://raw.githubusercontent.com/devxseven/admin_pannel/refs/heads/main/main.json")
+            .then(response => response.json())
+            .then(data => {
+                const matchList = document.getElementById('matchList');
+
+                const upcomingMatches = data.filter(match => {
+                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                    return now.isBefore(matchDateTime.clone().add(3, 'hours'));
+                });
+
+                upcomingMatches.forEach(match => {
+                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                    const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
+                    const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
+
+                    // Check if match is live
+                    const isLive = now.isBetween(tenMinutesBefore, threeHoursAfter);
+
+                    const card = document.createElement('div');
+                    card.className = 'card shadow-xl p-2 flex flex-col items-center';
+                    card.innerHTML = `
+                <h2 class="text-xs md:text-sm lg:text-base p-1 font-bold text-center league">${match.league}</h2>
+                <div class="grid grid-cols-10 gap-2 w-full text-center mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <img src="${match.home_img}" alt="Home Team" class="w-12 h-12 object-contain">
+                        <p class="text-[9px] md:text-[11px] lg:text-[13px] pt-1 font-semibold">${match.home_name}</p>
+                    </div>
+                    <div class="col-span-2 flex flex-col items-center match-date match-time">
+                        <p class="text-xs md:text-sm lg:text-base font-semibold">${match.date}</p>
+                        <p class="text-xs md:text-sm lg:text-base pt-1 pb-1 font-bold">${match.time}</p>
+                        ${isLive ? '<p class="text-xs md:text-sm lg:text-base text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <img src="${match.away_img}" alt="Away Team" class="w-12 h-12 object-contain">
+                        <p class="text-[9px] md:text-[11px] lg:text-[13px] pt-1 font-semibold">${match.away_name}</p>
+                    </div>
+                </div>
+            `;
+                    card.addEventListener('click', () => {
+                        tg.openLink(`https://yourdomain.com/player.html?id=${match.id}`);
+                    });
+                    matchList.appendChild(card);
+                });
+
+                if (upcomingMatches.length === 0) {
+                    matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching matches:', error);
+                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
+            });
+    </script>
 </body>
 
 </html>
