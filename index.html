@@ -51,21 +51,21 @@
 
                 upcomingMatches.forEach(match => {
                     const card = document.createElement('div');
-                    card.className = 'card bg-white shadow-xl p-2 flex flex-col items-center';
+                    card.className = 'card shadow-xl p-2 flex flex-col items-center';
                     card.innerHTML = `
-                        <h2 class="text-lg font-bold text-center league">${match.league}</h2>
+                        <h2 class="text-xs font-bold text-center league">${match.league}</h2>
                         <div class="grid grid-cols-10 gap-2 w-full text-center mt-2">
                             <div class="col-span-4 flex flex-col items-center home-name">
                                 <img src="${match.home_img}" alt="Home Team" class="w-12 h-12 object-contain">
-                                <p class="text-sm pt-2 font-semibold">${match.home_name}</p>
+                                <p class="text-[9px] pt-1 font-semibold">${match.home_name}</p>
                             </div>
                             <div class="col-span-2 flex flex-col items-center match-date match-time">
-                                <p class="text-sm font-semibold">${match.date}</p>
-                                <p class="text-base font-bold">${match.time}</p>
+                                <p class="text-xs pt-1 font-semibold">${match.date}</p>
+                                <p class="text-xs pt-1 font-bold">${match.time}</p>
                             </div>
                             <div class="col-span-4 flex flex-col items-center away-name">
                                 <img src="${match.away_img}" alt="Away Team" class="w-12 h-12 object-contain">
-                                <p class="text-sm pt-2 font-semibold">${match.away_name}</p>
+                                <p class="text-[9px] pt-1 font-semibold">${match.away_name}</p>
                             </div>
                         </div>
                     `;
