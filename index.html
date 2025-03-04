@@ -1,118 +1,556 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Matches</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link href='https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/hls.js@latest'></script>
+    <script src='https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"
+        type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/8.0.0-beta.3/hls.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
-    <style>
-        body {
-            min-height: 100vh;
-            height: auto;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 15px;
-            background-color: var(--tg-theme-secondary-bg-color, white);
-            color: var(--tg-theme-text-color, #222);
-            padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 15px);
-            padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 15px);
-            padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
-        }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
 
-        /* Card styles */
-        .card {
-            background-color: var(--tg-theme-bg-color, white);
-        }
-
-        /* Animation beat */
-        @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        .animate-beat {
-            animation: beat 1s infinite;
-        }
-
-        /* p tag Custom text styles */
-        .league,
-        .home-name,
-        .away-name,
-        .match-date,
-        .match-time {
-            color: var(--tg-theme-text-color, #222);
-        }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
+<style>
+    .video-player-mmfot {
+        width: 100%;
+        height: 380px;
+        margin: 0 auto 10px;
+        position: relative;
+    }
 
-<body class="p-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
+    .team-container {
+        margin: 0 auto;
+        width: 70%;
+        text-align: center;
+    }
+
+    .match-container-mm {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .backdrop-mm {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Ensures the image covers the entire container */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .overlay-mm {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(1px);
+        /* Semi-transparent overlay */
+        z-index: 2;
+    }
+
+    .content-mm {
+        position: relative;
+        z-index: 3;
+        /* Ensure content is above overlay */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: white;
+        /* Change text color to white for better contrast */
+    }
+
+    .team-section-mm {
+        display: flex;
+        justify-content: space-between;
+        /* Distribute space evenly between team-timers and the versus text */
+        align-items: center;
+        width: 100%;
+    }
+
+    .team-timer-mm {
+        width: 45%;
+        /* Each team-timer takes up 40% width */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .versus-mm {
+        width: 10%;
+        /* Center the "vs" text by giving it 20% width */
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+
+    .timer-img {
+        width: 70px;
+        height: 70px;
+        background-color: #ffffff;
+        border-radius: 50px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-timer-mm span {
+        font-size: 16px;
+    }
+
+    .timer-mm {
+        margin-top: 30px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .timer-league-mm {
+        margin-bottom: 30px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .timer-league-no {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    @media (max-width: 550px) {
+        .video-player-mmfot {
+            width: 100%;
+            height: 280px;
+            margin: 0 auto 10px;
+            position: relative;
+        }
+
+        .team-container {
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .team {
+            font-size: 9px;
+            flex: 1;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .team-away {
+            font-size: 9px;
+            flex: 1;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .vs {
+            flex: 0.45;
+            font-size: 10px;
+            line-height: 1;
+            padding: 2px 0px;
+            background-color: #D97706;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            margin: 0px 10px 4px;
+        }
+
+        .timer-img {
+            width: 50px;
+            height: 50px;
+            background-color: #ffffff;
+            border-radius: 50px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-timer-mm span {
+            font-size: 11px;
+        }
+    }
+
+    .team-cards {
+        font-size: 14px;
+        margin-bottom: 10px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(47, 47, 47, 0.3);
+        font-weight: 600;
+        text-align: center;
+        /* Centering the text */
+    }
+
+    .team-cards:hover {
+        background-color: #262626;
+        color: white;
+        box-shadow: 0 2px 4px rgba(40, 40, 40, 0.6);
+    }
+
+    .vs {
+        font-size: 11px;
+        line-height: 1;
+        padding: 2px 10px;
+        background-color: #D97706;
+        border-radius: 8px;
+        color: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        margin: 0px 10px 4px;
+    }
+
+    .team-names {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+
+    .team {
+        flex: 1;
+        text-align: right;
+        margin-bottom: 5px;
+    }
+
+    .team-away {
+        flex: 1;
+        text-align: left;
+        margin-bottom: 5px;
+    }
+
+    .selected {
+        background-color: #262626;
+        color: white;
+        box-shadow: 0 2px 4px rgba(40, 40, 40, 0.6);
+    }
+
+    .p-cus {
+        overflow: hidden;
+        /* Hides the overflowing text */
+        display: -webkit-box;
+        /* Needed for limiting to a specific number of lines */
+        -webkit-line-clamp: 1;
+        /* Limits the text to 1 line */
+        line-clamp: 1;
+        /* Standard property for compatibility */
+        -webkit-box-orient: vertical;
+        /* Ensures the text is vertically oriented */
+        white-space: normal;
+        /* Allows normal text wrapping */
+    }
+
+    .vs-cus {
+        font-weight: 600;
+        padding-top: 2px;
+    }
+
+    .league-name {
+        font-size: 11px;
+        position: relative;
+        text-align: center;
+    }
+
+    .id-number {
+        position: absolute;
+        font-size: 6px;
+        color: #a9a9a9;
+        padding: 0px 3px;
+    }
+
+    .league-text {
+        display: inline-block;
+    }
+
+    .team-logo {
+        width: 30px;
+        /* Adjust the size as needed */
+        height: 30px;
+        /* Maintain aspect ratio */
+        /* Space between image and team name */
+        vertical-align: middle;
+        /* Align image with text */
+    }
+
+    .loader-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        margin: 10px 0;
+    }
+
+    .loader {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #1976d2;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loading-text {
+        text-align: center;
+        font-weight: bold;
+        padding: 10px;
+    }
+</style>
+<style>
+    .myTg {
+        display: flex;
+        justify-content: center;
+        margin: auto;
+        text-align: center;
+    }
+
+    .myTgP {
+        height: 54px;
+        margin: 10px 0px;
+    }
+
+    a.myTgA {
+        background-color: #fff;
+        border-radius: 32px;
+        box-shadow: rgba(0, 0, 0, 0.26) 0px 2px 5px;
+        color: #262626;
+        display: inline-block;
+        font-size: large;
+        line-height: 54px;
+        padding: 0px 15px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out 0s;
+    }
+
+    #vid {
+        width: 100%;
+        height: 550px;
+        background: #fff;
+        border-radius: 7px;
+        padding: 5px 0px;
+    }
+
+    .myMMFotAd {
+        width: 100%;
+        display: flex;
+        /* Enable Flexbox */
+        justify-content: center;
+        /* Center horizontally */
+        align-items: center;
+        /* Center vertically */
+    }
+
+    .myMMFotAd img {
+        height: 150px;
+    }
+
+    @media (max-width: 550px) {
+
+        .myTgP {
+            height: 54px;
+            margin: 10px 0px;
+        }
+
+        a.myTgA {
+            background-color: #fff;
+            border-radius: 32px;
+            box-shadow: rgba(0, 0, 0, 0.26) 0px 2px 5px;
+            color: #262626;
+            display: inline-block;
+            font-size: small;
+            line-height: 54px;
+            padding: 0px 15px;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out 0s;
+        }
+
+        #vid {
+            width: 100%;
+            height: 300px;
+            background: #fff;
+            border-radius: 7px;
+            padding: 5px 0px;
+        }
+
+        .myMMFotAd {
+            width: 100%;
+        }
+
+        .myMMFotAd img {
+            height: auto;
+        }
+    }
+</style>
+
+<body>
+
+    <div style="display: flex; justify-content: center; align-items: center; height: 40px;">
+        <a href="https://poawooptugroo.com/4/8796524" target="_blank"><span class="play-icon">▶</span> Watch Here</a>
+    </div>
+    <div class="myTgP" id="myTgP1">
+        <div class="myTg" id="myTg1"></div>
+    </div>
+    <div class="new-match-list"></div>
+    <p></p>
+    <div style="display: flex; justify-content: center; align-items: center; height: 40px;">
+        <a href="https://poawooptugroo.com/4/8796524" target="_blank"><span class="play-icon">▶</span> Watch Here</a>
+    </div>
+    <div class="separator" style="clear: both;"><a
+            href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeYZvO4IbhPjeSRg35mhtbeKExU8bTHxjmQo3H4sFDnaInCgiz8kgscGkipyIB2XlrfWISsWHnHx21MC7q_ewGi8JgLHSnE-lEcxLxaN8j4hgnBJ0fYxLWOkQbx1cGJbuwP2Zketojw8tTzqkrm8HPnghfDmK9YDrafx4vRDUv_Qawa-HlAt1RFaVy1WlC/s1200/MMblog.png"
+            style="display: block; padding: 1em 0; text-align: center; "><img alt="" border="0" width="320"
+                data-original-height="500" data-original-width="1200"
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeYZvO4IbhPjeSRg35mhtbeKExU8bTHxjmQo3H4sFDnaInCgiz8kgscGkipyIB2XlrfWISsWHnHx21MC7q_ewGi8JgLHSnE-lEcxLxaN8j4hgnBJ0fYxLWOkQbx1cGJbuwP2Zketojw8tTzqkrm8HPnghfDmK9YDrafx4vRDUv_Qawa-HlAt1RFaVy1WlC/s320/MMblog.png" /></a>
+    </div>
+    <div class="myTgP" id="myTgP2">
+        <div class="myTg" id="myTg2"></div>
+    </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.BackButton.hide();
+        document.addEventListener("DOMContentLoaded", function () {
 
-        const now = moment.tz("Asia/Yangon");
+            const now = moment.tz("Asia/Yangon"); // Get current time in Asia/Yangon
+            const hrElement = document.getElementsByClassName('new-match-list')[0];
+            let teamContainer;
 
-        fetch("https://raw.githubusercontent.com/devxseven/admin_pannel/refs/heads/main/main.json")
-            .then(response => response.json())
-            .then(data => {
-                const matchList = document.getElementById('matchList');
+            if (hrElement && hrElement.nextElementSibling) {
+                const pElement = hrElement.nextElementSibling;
+                teamContainer = document.createElement('div');
+                teamContainer.className = 'team-container';
+                teamContainer.id = 'team-container';
+                pElement.insertAdjacentElement('afterend', teamContainer);
+            }
 
-                const upcomingMatches = data.filter(match => {
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                    return now.isBefore(matchDateTime.clone().add(3, 'hours'));
-                });
+            if (!teamContainer) return;
 
-                upcomingMatches.forEach(match => {
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                    const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
-                    const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
+            // Show loading text
+            const loadingText = document.createElement('div');
+            loadingText.className = 'loading-text';
+            loadingText.textContent = 'Loading matches...';
+            teamContainer.appendChild(loadingText);
 
-                    // Check if match is live
-                    const isLive = now.isBetween(tenMinutesBefore, threeHoursAfter);
+            // Create loader spinner
+            const loaderContainer = document.createElement('div');
+            loaderContainer.className = 'loader-container';
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loaderContainer.appendChild(loader);
+            teamContainer.appendChild(loaderContainer);
+            // Fetch API Data
+            fetch("https://raw.githubusercontent.com/devxseven/admin_pannel/refs/heads/main/main.json")
+                .then(response => response.json())
+                .then(data => {
+                    // Remove loader and loading text
+                    loaderContainer.style.display = 'none';
+                    loadingText.style.display = 'none';
+                    teamContainer.innerHTML = '';
 
-                    const card = document.createElement('div');
-                    card.className = 'card shadow-xl p-2 flex flex-col items-center';
-                    card.innerHTML = `
-                <h2 class="text-xs md:text-sm lg:text-base p-1 font-bold text-center league">${match.league}</h2>
-                <div class="grid grid-cols-10 gap-2 w-full text-center mt-2">
-                    <div class="col-span-4 flex flex-col items-center home-name">
-                        <img src="${match.home_img}" alt="Home Team" class="w-12 h-12 object-contain">
-                        <p class="text-[9px] md:text-[11px] lg:text-[13px] pt-1 font-semibold">${match.home_name}</p>
+                    const title = document.createElement('div');
+                    title.textContent = 'Football Schedule Fixtures';
+                    title.style.fontWeight = '900';
+                    title.style.paddingTop = '5px';
+                    title.style.paddingBottom = '5px';
+                    teamContainer.appendChild(title);
+
+                    data.forEach(match => {
+                        const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+
+                        // Check if the match time is before now
+                        if (matchDateTime.isBefore(now)) {
+                            console.log(`Match ${match.id} (${match.league}): ${match.home_name} vs ${match.away_name} has already started.`);
+                        } else {
+                            console.log(`Upcoming Match ${match.id} (${match.league}): ${match.home_name} vs ${match.away_name} at ${matchDateTime.format("YYYY-MM-DD HH:mm A")}`);
+                            const div = document.createElement('div');
+                            div.classList.add('team-cards');
+
+                            div.innerHTML = `
+                    <div class="league-name">
+                        <div class="id-number">${match.id}</div>
+                        <div class="league-text">${match.league}</div>
                     </div>
-                    <div class="col-span-2 flex flex-col items-center match-date match-time">
-                        <p class="text-xs md:text-sm lg:text-base font-semibold">${match.date}</p>
-                        <p class="text-xs md:text-sm lg:text-base pt-1 pb-1 font-bold">${match.time}</p>
-                        ${isLive ? '<p class="text-xs md:text-sm lg:text-base text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                    <div class="team-names">
+                        <div class="team">
+                            ${limitWords(match.home_name, 20)}
+                            <img src="${match.home_img}" alt="${match.home_name}" class="team-logo lazy-yard cbg">
+                        </div>
+                        <div class="vs">
+                            <div class="vs-cus">${match.date}</div>
+                            <div class="vs-cus">${match.time}</div>
+                        </div>
+                        <div class="team-away">
+                            <img src="${match.away_img}" alt="${match.away_name}" class="team-logo lazy-yard cbg">
+                            ${limitWords(match.away_name, 20)}
+                        </div>
                     </div>
-                    <div class="col-span-4 flex flex-col items-center away-name">
-                        <img src="${match.away_img}" alt="Away Team" class="w-12 h-12 object-contain">
-                        <p class="text-[9px] md:text-[11px] lg:text-[13px] pt-1 font-semibold">${match.away_name}</p>
-                    </div>
-                </div>
-            `;
-                    card.addEventListener('click', () => {
-                        tg.openLink(`https://yourdomain.com/player.html?id=${match.id}`);
+                `;
+
+                            div.addEventListener('click', function () {
+                                if (match.id) {
+                                    const paddedId = match.id === "07" ? `0${match.id}` : match.id;
+                                    window.location.href = `https://www.mmfot.com/p/match-${paddedId}.html`;
+                                }
+                            });
+
+                            teamContainer.appendChild(div);
+                        }
                     });
-                    matchList.appendChild(card);
-                });
+                })
+                .catch(error => console.error("Error fetching match data:", error));
 
-                if (upcomingMatches.length === 0) {
-                    matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
+            function limitWords(teamName, charLimit) {
+                if (teamName.length > charLimit) {
+                    const words = teamName.split(' ');
+                    let limitedName = '';
+
+                    for (let i = 0; i < words.length; i++) {
+                        if ((limitedName + words[i]).length > charLimit) {
+                            limitedName += words[i] + ' ';
+                            return limitedName.trim().slice(0, charLimit) + '.';
+                        }
+                        limitedName += words[i] + ' ';
+                    }
+
+                    return limitedName.trim();
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching matches:', error);
-                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
-            });
+                return teamName;
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        // Get all elements with the class "myTg"
+        const myTgElements = document.querySelectorAll(".myTg");
+        // Loop through each element and append the content
+        myTgElements.forEach((element) => {
+            element.innerHTML += `
+                <a class="myTgA" href="https://t.me/mmfottv" target="_blank">
+                    <i class="fa-brands fa-telegram fa-2xl" style="color: #24a1de;"></i> Join Us On Telegram Channel
+                </a>`;
+        });
     </script>
 </body>
 
