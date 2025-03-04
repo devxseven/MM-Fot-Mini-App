@@ -17,7 +17,10 @@
         }
 
         body {
+            min-height: 100vh;
+            height: auto;
             --bg-color: var(--tg-theme-secondary-bg-color, #fff);
+            --card-bg-color: var(--tg-theme-bg-color, #fff);
             font-family: sans-serif;
             /*  background-color: var(--bg-color);*/
             background: transparent linear-gradient(180deg, var(--bg-color) 0%, var(--bg-color) 100%) no-repeat;
@@ -43,7 +46,7 @@
 
         /* Card styles */
         .card {
-            background-color: var(--tg-theme-bg-color, white);
+            background-color: var(--card-bg-color, #ffffff);
         }
 
         /* Animation beat */
@@ -71,18 +74,21 @@
         .match-time {
             color: var(--tg-theme-text-color, #222);
         }
+        .button {
+            background-color: var(--card-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #222);
+        }
     </style>
 </head>
 
 <body>
     <section>
         <div class="flex gap-3">
-            <button class="bg-white text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg">Change Fullscreen</button>
-            <button class="bg-white text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg">Reload</button>
+            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg button">Change Fullscreen</button>
+            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg button">Reload</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
     </section>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
 
     <script>
         const tg = window.Telegram.WebApp;
