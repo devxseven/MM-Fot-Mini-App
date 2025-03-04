@@ -15,11 +15,11 @@
         html {
             overscroll-behavior-x: none;
         }
-        
+
         body {
             min-height: 100vh;
             height: auto;
-            --bg-color: var(--tg-theme-secondary-bg-color, #fff);
+            --bg-color: var(--tg-theme-section-bg-color, #fff);
             --card-bg-color: var(--tg-theme-bg-color, #fff);
             font-family: sans-serif;
             background-color: var(--bg-color);
@@ -27,6 +27,10 @@
             margin: 0;
             padding: 0;
             color-scheme: var(--tg-color-scheme);
+        }
+
+        body.gray {
+            background-color: var(--tg-theme-section-bg-color, #efefef);
         }
 
         section {
@@ -78,8 +82,8 @@
 <body>
     <section>
         <div class="flex gap-3">
-            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-md button">Change Fullscreen</button>
-            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-md button">Reload</button>
+            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg button">Change Fullscreen</button>
+            <button class="btn text-sm px-5 py-2.5 mb-3 rounded-lg shadow-lg button">Reload</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
     </section>
@@ -111,7 +115,7 @@
                     const isLive = now.isBetween(tenMinutesBefore, threeHoursAfter);
 
                     const card = document.createElement('div');
-                    card.className = 'card shadow-md p-2 flex flex-col items-center';
+                    card.className = 'card shadow-xl p-2 flex flex-col items-center';
                     card.innerHTML = `
                 <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league}</h2>
                 <div class="grid grid-cols-10 gap-2 w-full text-center mt-2">
