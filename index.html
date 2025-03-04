@@ -17,16 +17,9 @@
             height: auto;
             font-family: sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 15px;
             background-color: var(--tg-theme-secondary-bg-color, white);
             color: var(--tg-theme-text-color, #222);
-            color-scheme: var(--tg-color-scheme);
-        }
-
-        section {
-            padding: 15px;
-            text-align: center;
-            background-color: var(--bg-color, #ffffff);
             padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 15px);
             padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 15px);
             padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
@@ -58,10 +51,8 @@
 </head>
 
 <body class="p-4">
-    <section>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
-    </section>
-    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matchList"></div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
