@@ -76,6 +76,12 @@
         .button {
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: darken(var(--card-bg-color, #ffffff), 20%);
+            color: darken(var(--tg-theme-text-color, #222), 20%);
         }
     </style>
 </head>
@@ -84,16 +90,16 @@
     <section>
         <div class="flex gap-3">
             <button class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                    fill="var(--tg-theme-text-color, #222)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
                     <path
                         d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
                 </svg>
                 Change Fullscreen
             </button>
             <button class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                    fill="var(--tg-theme-text-color, #222)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
                     <path
                         d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
                 </svg>
