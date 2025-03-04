@@ -77,11 +77,14 @@
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
             transition: all 0.3s ease;
+            /* Smooth transition for the hover effect */
         }
 
         .button:hover {
-            background-color: darken(var(--card-bg-color, #ffffff), 20%);
-            color: darken(var(--tg-theme-text-color, #222), 20%);
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Darken the background color by 20% */
+            color: rgba(34, 34, 34, 0.8);
+            /* Darken the text color by 20% */
         }
     </style>
 </head>
