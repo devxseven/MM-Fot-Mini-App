@@ -9,8 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
     <style>
         html {
             overscroll-behavior-x: none;
@@ -83,7 +82,7 @@
 <body>
     <section>
         <div class="flex gap-3">
-            <button class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
+            <button id="fullscreen_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
                     fill="var(--tg-theme-text-color, #222)">
                     <path
@@ -91,7 +90,7 @@
                 </svg>
                 Change Fullscreen
             </button>
-            <button class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
+            <button id="reload_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
                     fill="var(--tg-theme-text-color, #222)">
                     <path
@@ -108,120 +107,191 @@
         tg.ready();
         tg.expand();
         tg.BackButton.hide();
-    
-        const now = moment.tz("Asia/Yangon");
-        const encryptionKey = "devxseven"; // Should be stored securely, not hardcoded
-    
-        // Encryption/Decryption functions from your admin panel
-        function decryptString(encryptedBase64, key) {
-            if (!encryptedBase64 || typeof encryptedBase64 !== 'string') return '';
-            if (!key) return encryptedBase64;
-    
-            try {
-                const decoded = atob(encryptedBase64);
-                let decrypted = "";
-                for (let i = 0; i < decoded.length; i++) {
-                    const charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-                    decrypted += String.fromCharCode(charCode);
-                }
-                return decodeURIComponent(decrypted);
-            } catch (error) {
-                return encryptedBase64;
-            }
-        }
-    
-        function decryptObject(encryptedObj, key) {
-            if (!encryptedObj || typeof encryptedObj !== 'object') return {};
-            const decryptedObj = {};
-            for (const [k, v] of Object.entries(encryptedObj)) {
-                try {
-                    const decryptedKey = decryptString(k, key);
-                    const decryptedValue = JSON.parse(decryptString(v, key));
-                    decryptedObj[decryptedKey] = decryptedValue;
-                } catch (error) {
-                    decryptedObj[k] = v;
-                }
-            }
-            return decryptedObj;
-        }
-    
-        // Modified fetch function to handle encrypted JSON
-        async function fetchAndDecryptJson() {
-            try {
-                const response = await fetch("https://raw.githubusercontent.com/devxseven/admin_pannel/refs/heads/main/main.json");
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const encryptedData = await response.json();
-                // Decrypt the data
-                const decryptedData = decryptObject(encryptedData, encryptionKey);
-                return decryptedData.context || []; // Return the context array
-            } catch (error) {
-                console.error('Error fetching/decrypting matches:', error);
-                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
-                return [];
-            }
-        }
-    
-        // Main function to load and display matches
-        async function loadMatches() {
-            const matchList = document.getElementById('matchList');
-            const matches = await fetchAndDecryptJson();
-    
-            const upcomingMatches = matches.filter(match => {
-                if (!match.date || !match.time) return false;
-                const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                return now.isBefore(matchDateTime.clone().add(3, 'hours'));
-            });
-    
-            if (upcomingMatches.length === 0) {
-                matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
-                return;
-            }
-    
-            upcomingMatches.forEach(match => {
-                const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
-                const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
-    
-                const isLive = now.isBetween(tenMinutesBefore, threeHoursAfter);
-    
-                const card = document.createElement('div');
-                card.className = 'card shadow-xl p-1 flex flex-col items-center';
-                card.innerHTML = `
-                    <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
-                    <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
-                        <div class="col-span-4 flex flex-col items-center home-name">
-                            <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                            <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
-                        </div>
-                        <div class="col-span-3 flex flex-col items-center match-date match-time">
-                            <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
-                            <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
-                            ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
-                        </div>
-                        <div class="col-span-4 flex flex-col items-center away-name">
-                            <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                            <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
-                        </div>
-                    </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    if (match.id) {
-                        tg.openLink(`https://yourdomain.com/player.html?id=${match.id}`);
+
+        const MMFotApp = {
+            encryptionKey: "devxseven", // Should be stored securely, not hardcoded
+            now: moment.tz("Asia/Yangon"),
+
+            init() {
+                tg.ready();
+                tg.expand();
+                this.initBackButton();
+                this.initFullscreen();
+                this.initReload();
+                this.loadMatches().catch(error => {
+                    console.error('Error initializing app:', error);
+                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                });
+            },
+
+            initBackButton() {
+                tg.BackButton.onClick(() => {
+                    tg.BackButton.hide();
+                    // Add any additional logic for back button click
+                });
+            },
+
+            initFullscreen() {
+                const fullscreenBtn = document.getElementById('fullscreen_btn');
+                fullscreenBtn.addEventListener('click', () => this.toggleFullscreen(fullscreenBtn));
+
+                tg.onEvent('fullscreenChanged', () => this.updateFullscreenButton(fullscreenBtn));
+                tg.onEvent('fullscreenFailed', (params) => {
+                    if (params.error === 'ALREADY_FULLSCREEN') {
+                        this.updateFullscreenButton(fullscreenBtn);
+                    } else {
+                        tg.showAlert('Fullscreen failed: ' + params.error);
                     }
                 });
-                
-                matchList.appendChild(card);
-            });
-        }
-    
+
+                this.updateFullscreenButton(fullscreenBtn);
+            },
+
+            toggleFullscreen(el) {
+                if (tg.isFullscreen) {
+                    tg.exitFullscreen();
+                    this.saveFullscreenState('no');
+                } else {
+                    tg.requestFullscreen();
+                    this.saveFullscreenState('yes');
+                }
+            },
+
+            saveFullscreenState(state) {
+                const key = 'fullscreen';
+                const value = state;
+
+                tg.CloudStorage.setItem(key, value, (err, saved) => {
+                    if (err) {
+                        tg.showAlert('Error: ' + err);
+                    } else if (saved) {
+                        console.log('Fullscreen state saved:', value);
+                    }
+                });
+            },
+
+            updateFullscreenButton(el) {
+                if (tg.isFullscreen) {
+                    el.innerHTML = 'Exit Fullscreen';
+                } else {
+                    el.innerHTML = 'Change Fullscreen';
+                }
+            },
+
+            initReload() {
+                const reloadBtn = document.getElementById('reload_btn');
+                reloadBtn.addEventListener('click', () => this.reloadApp());
+            },
+
+            reloadApp() {
+                window.location.reload();
+            },
+
+            decryptString(encryptedBase64, key) {
+                if (!encryptedBase64 || typeof encryptedBase64 !== 'string') return '';
+                if (!key) return encryptedBase64;
+
+                try {
+                    const decoded = atob(encryptedBase64);
+                    let decrypted = "";
+                    for (let i = 0; i < decoded.length; i++) {
+                        const charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                        decrypted += String.fromCharCode(charCode);
+                    }
+                    return decodeURIComponent(decrypted);
+                } catch (error) {
+                    return encryptedBase64;
+                }
+            },
+
+            decryptObject(encryptedObj, key) {
+                if (!encryptedObj || typeof encryptedObj !== 'object') return {};
+                const decryptedObj = {};
+                for (const [k, v] of Object.entries(encryptedObj)) {
+                    try {
+                        const decryptedKey = this.decryptString(k, key);
+                        const decryptedValue = JSON.parse(this.decryptString(v, key));
+                        decryptedObj[decryptedKey] = decryptedValue;
+                    } catch (error) {
+                        decryptedObj[k] = v;
+                    }
+                }
+                return decryptedObj;
+            },
+
+            async fetchAndDecryptJson() {
+                try {
+                    const response = await fetch("https://raw.githubusercontent.com/devxseven/mmfot-data/refs/heads/main/main.json");
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const encryptedData = await response.json();
+                    // Decrypt the data
+                    const decryptedData = this.decryptObject(encryptedData, this.encryptionKey);
+                    return decryptedData.context || []; // Return the context array
+                } catch (error) {
+                    console.error('Error fetching/decrypting matches:', error);
+                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
+                    return [];
+                }
+            },
+
+            async loadMatches() {
+                const matchList = document.getElementById('matchList');
+                const matches = await this.fetchAndDecryptJson();
+
+                const upcomingMatches = matches.filter(match => {
+                    if (!match.date || !match.time) return false;
+                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                    return this.now.isBefore(matchDateTime.clone().add(3, 'hours'));
+                });
+
+                if (upcomingMatches.length === 0) {
+                    matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
+                    return;
+                }
+
+                upcomingMatches.forEach(match => {
+                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                    const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
+                    const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
+
+                    const isLive = this.now.isBetween(tenMinutesBefore, threeHoursAfter);
+
+                    const card = document.createElement('div');
+                    card.className = 'card shadow-xl p-1 flex flex-col items-center';
+                    card.innerHTML = `
+                        <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
+                        <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
+                            <div class="col-span-4 flex flex-col items-center home-name">
+                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
+                            </div>
+                            <div class="col-span-3 flex flex-col items-center match-date match-time">
+                                <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
+                                <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
+                                ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                            </div>
+                            <div class="col-span-4 flex flex-col items-center away-name">
+                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        if (match.id) {
+                            tg.openLink(`https://yourdomain.com/player.html?id=${match.id}`);
+                        }
+                    });
+
+                    matchList.appendChild(card);
+                });
+            },
+        };
+
         // Initialize the app
-        loadMatches().catch(error => {
-            console.error('Error initializing app:', error);
-            document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-        });
+        MMFotApp.init();
     </script>
 </body>
 
