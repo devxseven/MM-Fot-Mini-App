@@ -110,7 +110,7 @@
         tg.ready();
         tg.expand();
         tg.BackButton.hide();
-
+        tg.enableClosingConfirmation();
         const MMFotApp = {
             encryptionKey: "devxseven", // Should be stored securely, not hardcoded
             now: moment.tz("Asia/Yangon"),
@@ -128,15 +128,15 @@
             },
 
             initBackButton() {
-                tg.BackButton.show();
-                tg.BackButton.onClick(() => {
-                    tg.showConfirm('Do you want to exit the app?', (confirmed) => {
-                        if (confirmed) {
-                            tg.close(); // Close the app if "OK" is clicked
-                        }
-                        // If "Cancel" is clicked, do nothing
-                    });
-                });
+                // tg.BackButton.show();
+                // tg.BackButton.onClick(() => {
+                //     tg.showConfirm('Do you want to exit the app?', (confirmed) => {
+                //         if (confirmed) {
+                //             tg.close(); // Close the app if "OK" is clicked
+                //         }
+                //         // If "Cancel" is clicked, do nothing
+                //     });
+                // });
             },
 
             initFullscreen() {
