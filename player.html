@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
     <style>
         html {
             overscroll-behavior-x: none;
@@ -41,37 +42,6 @@
             padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
         }
 
-        /* Card styles */
-        .card {
-            background-color: var(--card-bg-color, #ffffff);
-        }
-
-        /* Animation beat */
-        @keyframes beat {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-        }
-
-        .animate-beat {
-            animation: beat 1s infinite;
-        }
-
-        /* p tag Custom text styles */
-        .league,
-        .home-name,
-        .away-name,
-        .match-date,
-        .match-time {
-            color: var(--tg-theme-text-color, #222);
-        }
-
         .button {
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
@@ -82,20 +52,26 @@
 <body>
     <section>
         <div class="flex gap-3 justify-center">
-            <button id="fullscreen_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
-                    <path d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z"/>
+            <button id="fullscreen_btn"
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                    <path
+                        d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
                 </svg>
                 Change Fullscreen
             </button>
-            <button id="reload_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
-                    <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/>
+            <button id="reload_btn"
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                    <path
+                        d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
                 </svg>
                 Reload
             </button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
+        <div id="match-player"></div>
     </section>
 
     <script>
@@ -103,7 +79,7 @@
         tg.ready();
         tg.expand();
         tg.BackButton.hide();
-        
+
         const MMFotApp = {
             encryptionKey: "devxseven", // Should be stored securely, not hardcoded
             now: moment.tz("Asia/Yangon"),
@@ -114,16 +90,18 @@
                 this.initBackButton();
                 this.initFullscreen();
                 this.initReload();
-                this.loadMatches().catch(error => {
+                this.loadMatch().catch(error => {
                     console.error('Error initializing app:', error);
-                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                    document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
                 });
             },
 
             initBackButton() {
+                // Show the BackButton
+                tg.BackButton.show();
                 tg.BackButton.onClick(() => {
-                    tg.BackButton.hide();
-                    // Add any additional logic for back button click
+                    // Navigate back to the previous page (like browser back button)
+                    window.history.back();
                 });
             },
 
@@ -264,62 +242,166 @@
                     return decryptedData.context || []; // Return the context array
                 } catch (error) {
                     console.error('Error fetching/decrypting matches:', error);
-                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
                     return [];
                 }
             },
 
-            async loadMatches() {
-                const matchList = document.getElementById('matchList');
-                const matches = await this.fetchAndDecryptJson();
+            async loadMatch() {
+                // Get the match ID from the URL query parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const matchId = urlParams.get('id');
 
-                const upcomingMatches = matches.filter(match => {
-                    if (!match.date || !match.time) return false;
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                    return this.now.isBefore(matchDateTime.clone().add(3, 'hours'));
-                });
-
-                if (upcomingMatches.length === 0) {
-                    matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
+                if (!matchId) {
+                    document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">No match ID provided.</p>';
                     return;
                 }
 
-                upcomingMatches.forEach(match => {
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                    const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
-                    const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
+                // Fetch and decrypt the match data
+                const matches = await this.fetchAndDecryptJson();
+                const match = matches.find(m => m.id === matchId);
 
-                    const isLive = this.now.isBetween(tenMinutesBefore, threeHoursAfter);
+                if (!match) {
+                    document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Match not found.</p>';
+                    return;
+                }
 
-                    const card = document.createElement('div');
-                    card.className = 'card shadow-xl p-1 flex flex-col items-center';
-                    card.innerHTML = `
-                        <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
-                        <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
-                            <div class="col-span-4 flex flex-col items-center home-name">
-                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
-                            </div>
-                            <div class="col-span-3 flex flex-col items-center match-date match-time">
-                                <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
-                                <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
-                                ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
-                            </div>
-                            <div class="col-span-4 flex flex-col items-center away-name">
-                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
+                // Display match details
+                this.displayMatchDetails(match);
+
+                // Calculate the match date and time
+                const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
+                const distance = matchDateTime.diff(this.now);
+
+                // Check if the match is within 10 minutes
+                if (distance <= 600000) { // 10 minutes in milliseconds
+                    this.showArtPlayer(match);
+                } else {
+                    // Show countdown
+                    this.showCountdown(match, distance);
+                }
+            },
+
+            displayMatchDetails(match) {
+                const matchPlayer = document.getElementById('match-player');
+                matchPlayer.innerHTML = `
+                    <div class="match-container-line">
+                        <div class="center-line">
+                            <div class="timer-league-mm">${match.league}</div>
+                            <div class="team-section-mm">
+                                <div class="team-timer-mm">
+                                    <img src="${match.home_img}" alt="${match.home_name} logo" class="timer-img lazy-yard tbg">
+                                    <span>${match.home_name}</span>
+                                </div>
+                                <div class="versus-mm">VS</div>
+                                <div class="team-timer-mm">
+                                    <img src="${match.away_img}" alt="${match.away_name} logo" class="timer-img lazy-yard tbg">
+                                    <span>${match.away_name}</span>
+                                </div>
                             </div>
                         </div>
-                    `;
+                    </div>`;
+            },
 
-                    card.addEventListener('click', () => {
-                        if (match.id) {
-                            window.location.href = `player.html?id=${match.id}`;
-                        }
+            showCountdown(match, distance) {
+                const matchPlayer = document.getElementById('match-player');
+                const countdownElement = document.createElement('div');
+                countdownElement.className = 'timer-mm';
+                countdownElement.innerHTML = `The match will start in <span id="countdown">00:00:00</span>.`;
+
+                matchPlayer.appendChild(countdownElement);
+
+                // Update countdown every second
+                const countdownInterval = setInterval(() => {
+                    distance -= 1000; // Decrease distance by 1 second
+
+                    // Update countdown UI
+                    this.updateCountdownUI(distance);
+
+                    // Check if countdown has reached 10 minutes
+                    if (distance <= 600000) { // 10 minutes in milliseconds
+                        clearInterval(countdownInterval);
+                        this.showArtPlayer(match);
+                    }
+                }, 1000); // Update every second
+            },
+
+            updateCountdownUI(distance) {
+                const countdownElement = document.getElementById('countdown');
+                if (countdownElement) {
+                    const hours = Math.floor(distance / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Format time as two digits
+                    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    countdownElement.innerHTML = `${formattedTime}`;
+                }
+            },
+
+            showArtPlayer(match) {
+                const matchPlayer = document.getElementById('match-player');
+                matchPlayer.innerHTML = `
+                    <div id="art-player"></div>
+                    <div id="player-buttons"></div>`;
+
+                // Initialize Artplayer
+                this.initializePlayer(match);
+
+                // Add buttons for links
+                this.addPlayerButtons(match);
+            },
+
+            initializePlayer(match) {
+                if (match.links && match.links.length > 0) {
+                    const initialUrl = this.generateStreamUrl(match.links[0]);
+                    const art = new Artplayer({
+                        container: '#art-player',
+                        url: initialUrl,
+                        autoplay: true,
+                        isLive: true,
+                        fullscreenWeb: true,
+                        fullscreen: true,
+                        autoOrientation: true,
+                        controls: [
+                            {
+                                position: 'left',
+                                html: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFF"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>',
+                                tooltip: 'Reload',
+                                click: () => art.switchUrl(initialUrl),
+                            },
+                            {
+                                position: 'left',
+                                html: '<span class="dot" style="height: 6px; width: 6px; background-color: red; border-radius: 50%; display: inline-block; margin-right: 5px;"></span><span style="color:white; font-weight: 900; font-size: smaller;">Live</span>',
+                            },
+                        ],
                     });
+                }
+            },
 
-                    matchList.appendChild(card);
-                });
+            addPlayerButtons(match) {
+                const playerButtons = document.getElementById('player-buttons');
+                if (match.links && match.links.length > 0) {
+                    match.links.forEach((link, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'btn';
+                        button.innerHTML = `<strong>${link.name}</strong>`;
+                        button.onclick = () => this.changeVideo(link.url);
+                        playerButtons.appendChild(button);
+                    });
+                }
+            },
+
+            generateStreamUrl(link) {
+                // Logic to generate the stream URL based on the link
+                // Replace this with your actual logic
+                return link.url;
+            },
+
+            changeVideo(url) {
+                // Logic to change the video URL in Artplayer
+                // Replace this with your actual logic
+                console.log('Changing video to:', url);
             },
         };
 
