@@ -76,30 +76,57 @@
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
         }
+
+        /* Sticky header */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--bg-color, #ffffff);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sticky-header.hide {
+            transform: translateY(-100%);
+        }
+
+        /* Scrollable card container */
+        .scrollable-container {
+            max-height: calc(100vh - 120px); /* Adjust based on header height */
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
     </style>
 </head>
 
 <body>
     <section>
-        <div class="flex gap-3">
-            <button id="fullscreen_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                    fill="var(--tg-theme-text-color, #222)">
-                    <path
-                        d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
-                </svg>
-                Change Fullscreen
-            </button>
-            <button id="reload_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                    fill="var(--tg-theme-text-color, #222)">
-                    <path
-                        d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
-                </svg>
-                Reload
-            </button>
+        <!-- Sticky Header -->
+        <div id="stickyHeader" class="sticky-header">
+            <div class="flex gap-3">
+                <button id="fullscreen_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                        fill="var(--tg-theme-text-color, #222)">
+                        <path
+                            d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
+                    </svg>
+                    Change Fullscreen
+                </button>
+                <button id="reload_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                        fill="var(--tg-theme-text-color, #222)">
+                        <path
+                            d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+                    </svg>
+                    Reload
+                </button>
+            </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
+
+        <!-- Scrollable Card Container -->
+        <div class="scrollable-container">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
+        </div>
     </section>
 
     <script>
@@ -107,6 +134,24 @@
         tg.ready();
         tg.expand();
         tg.BackButton.hide();
+
+        // Scroll direction detection for sticky header
+        let lastScrollTop = 0;
+        const stickyHeader = document.getElementById('stickyHeader');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down
+                stickyHeader.classList.add('hide');
+            } else {
+                // Scrolling up
+                stickyHeader.classList.remove('hide');
+            }
+
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For mobile or negative scrolling
+        });
 
         const MMFotApp = {
             encryptionKey: "devxseven", // Should be stored securely, not hardcoded
@@ -144,6 +189,31 @@
                     }
                 });
 
+                // Load the fullscreen state from cloud storage
+                tg.CloudStorage.getItem('fullscreen', function (err, value) {
+                    if (!err && value) {
+                        if (value === 'yes') {
+                            Telegram.WebApp.requestFullscreen();
+                            fullscreenBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                                fill="var(--tg-theme-text-color, #222)">
+                                <path 
+                                    d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
+                            </svg>
+                            Exit Fullscreen`;
+                        } else {
+                            Telegram.WebApp.exitFullscreen();
+                            fullscreenBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                                fill="var(--tg-theme-text-color, #222)">
+                                <path
+                                    d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
+                            </svg>
+                            Change Fullscreen`;
+                        }
+                    }
+                });
+
                 this.updateFullscreenButton(fullscreenBtn);
             },
 
@@ -152,7 +222,7 @@
                     tg.exitFullscreen();
                     this.saveFullscreenState('no');
                 } else {
-                    tg.requestFullscreen();
+                    tg.requestFullscreen();CloudStorage
                     this.saveFullscreenState('yes');
                 }
             },
@@ -172,9 +242,21 @@
 
             updateFullscreenButton(el) {
                 if (tg.isFullscreen) {
-                    el.innerHTML = 'Exit Fullscreen';
+                    el.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                                fill="var(--tg-theme-text-color, #222)">
+                                <path 
+                                    d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
+                            </svg>
+                            Exit Fullscreen`;
                 } else {
-                    el.innerHTML = 'Change Fullscreen';
+                    el.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                                fill="var(--tg-theme-text-color, #222)">
+                                <path
+                                    d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
+                            </svg>
+                            Change Fullscreen`;
                 }
             },
 
