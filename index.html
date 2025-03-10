@@ -121,9 +121,11 @@
             },
 
             initBackButton() {
+                tg.BackButton.show();
                 tg.BackButton.onClick(() => {
-                    tg.BackButton.hide();
-                    // Add any additional logic for back button click
+                    tg.showConfirm('Do you want to exit the app?', () => {
+                        tg.close();
+                    });
                 });
             },
 
