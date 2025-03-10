@@ -130,10 +130,11 @@
             initBackButton() {
                 tg.BackButton.show();
                 tg.BackButton.onClick(() => {
-                    tg.showConfirm('Do you want to exit the app?', () => {
-                        tg.close();
-                    }, () => {
-                        // Do nothing on cancel
+                    tg.showConfirm('Do you want to exit the app?', (confirmed) => {
+                        if (confirmed) {
+                            tg.close(); // Close the app if "OK" is clicked
+                        }
+                        // If "Cancel" is clicked, do nothing
                     });
                 });
             },
