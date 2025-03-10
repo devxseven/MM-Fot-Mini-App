@@ -111,7 +111,6 @@
             init() {
                 tg.ready();
                 tg.expand();
-                this.initBackButton();
                 this.initFullscreen();
                 this.initReload();
                 this.loadMatches().catch(error => {
@@ -120,13 +119,6 @@
                 });
             },
 
-            initBackButton() {
-                tg.BackButton.show();
-                tg.BackButton.onClick(() => {
-                    tg.BackButton.hide();
-                    // Add any additional logic for back button click
-                });
-            },
             // initBackButton() {
             //     tg.BackButton.show();
             //     tg.BackButton.onClick(() => {
