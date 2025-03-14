@@ -79,6 +79,7 @@
                 Reload
             </button>
         </div>
+        <div id="match-detail"></div>
         <div id="match-player"></div>
     </section>
 
@@ -273,13 +274,13 @@
                     return;
                 }
 
-                // Display match details
-                this.displayMatchDetails(match);
-
                 // Calculate the match date and time
                 const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
                 const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
                 const distance = matchDateTime.diff(this.now);
+
+                // Display match details with distance
+                this.displayMatchDetails(match, distance);
 
                 // Check if the match is within 10 minutes
                 if (distance <= 600000) { // 10 minutes in milliseconds
@@ -290,13 +291,13 @@
                 }
             },
 
-            displayMatchDetails(match) {
-                const matchPlayer = document.getElementById('match-player');
-                matchPlayer.innerHTML = ''; // Clear existing content
+            displayMatchDetails(match, distance) {
+                const matchDetail = document.getElementById('match-detail');
+                matchDetail.innerHTML = ''; // Clear existing content
 
                 const card = document.createElement('div');
                 card.className = 'card shadow-xl p-1 flex flex-col items-center';
-                const isLive = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon").isBefore(this.now);
+                const isLive = distance <= 600000; // Show LIVE only if within 10 minutes
                 card.innerHTML = `
                     <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
                     <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
@@ -315,7 +316,7 @@
                         </div>
                     </div>
                 `;
-                matchPlayer.appendChild(card);
+                matchDetail.appendChild(card);
             },
 
             showCountdown(match, distance) {
@@ -336,6 +337,7 @@
                     // Check if countdown has reached 10 minutes
                     if (distance <= 600000) { // 10 minutes in milliseconds
                         clearInterval(countdownInterval);
+                        this.displayMatchDetails(match, distance);
                         this.showArtPlayer(match);
                     }
                 }, 1000); // Update every second
