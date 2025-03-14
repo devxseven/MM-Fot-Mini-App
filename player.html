@@ -46,6 +46,14 @@
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
         }
+
+        /* Ensure the countdown timer is styled appropriately */
+        .timer-mm {
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--tg-theme-text-color, #222);
+        }
     </style>
 </head>
 
@@ -284,23 +292,30 @@
 
             displayMatchDetails(match) {
                 const matchPlayer = document.getElementById('match-player');
-                matchPlayer.innerHTML = `
-                    <div class="match-container-line">
-                        <div class="center-line">
-                            <div class="timer-league-mm">${match.league}</div>
-                            <div class="team-section-mm">
-                                <div class="team-timer-mm">
-                                    <img src="${match.home_img}" alt="${match.home_name} logo" class="timer-img lazy-yard tbg">
-                                    <span>${match.home_name}</span>
-                                </div>
-                                <div class="versus-mm">VS</div>
-                                <div class="team-timer-mm">
-                                    <img src="${match.away_img}" alt="${match.away_name} logo" class="timer-img lazy-yard tbg">
-                                    <span>${match.away_name}</span>
-                                </div>
-                            </div>
+                matchPlayer.innerHTML = ''; // Clear existing content
+
+                const card = document.createElement('div');
+                card.className = 'card shadow-xl p-1 flex flex-col items-center';
+                const isLive = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon").isBefore(this.now);
+                card.innerHTML = `
+                    <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
+                    <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
+                        <div class="col-span-4 flex flex-col items-center home-name">
+                            <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                            <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
                         </div>
-                    </div>`;
+                        <div class="col-span-3 flex flex-col items-center match-date match-time">
+                            <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
+                            <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
+                            ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                        </div>
+                        <div class="col-span-4 flex flex-col items-center away-name">
+                            <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                            <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
+                        </div>
+                    </div>
+                `;
+                matchPlayer.appendChild(card);
             },
 
             showCountdown(match, distance) {
