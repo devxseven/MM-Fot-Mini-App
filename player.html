@@ -484,7 +484,7 @@
                 art.on('fullscreenWeb', (state) => {
                     const artPlayer = document.getElementById('art-player');
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
-                    const videoLeft = artPlayer.querySelector('.art-video');
+                    const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
                     if (videoLeft) {
                         alert('Video found');
                     }else{
