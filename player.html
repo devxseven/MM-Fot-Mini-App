@@ -42,8 +42,8 @@
             padding: 8px;
             text-align: center;
             background-color: var(--bg-color, #ffffff);
-            padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 15px);
-            padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 15px);
+            padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 8px);
+            padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 8px);
             padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
         }
 
@@ -397,12 +397,11 @@
                 // Assuming 'art' is your ArtPlayer instance, listen for fullscreenWeb event
                 if (this.art) { // Ensure 'art' is initialized elsewhere
                     this.art.on('fullscreenWeb', (state) => {
-                        const artPlayer = document.getElementById('art-player');
-                        const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
+                        const controlsLeft = document.querySelector('.art-mobile .art-controls-left');
                         if (state) { // fullscreenWeb is true
                             controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                         } else { // fullscreenWeb is false
-                            controlsLeft.style.paddingTop = '0'; // Reset padding when exiting fullscreen
+                            controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
                         }
                     });
                 }
