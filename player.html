@@ -482,12 +482,12 @@
                 });
 
                 art.on('fullscreenWeb', (state) => {
+                    const artPlayer = document.getElementById('art-player');
+                    const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     if (state) { // fullscreenWeb is true
-                        alert('FullscreenWeb is true');
-                        //controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
+                        controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                     } else { // fullscreenWeb is false
-                        alert('FullscreenWeb is false');
-                        //controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
+                        controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
                     }
                 });
             },
