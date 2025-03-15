@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/8.0.0-beta.3/hls.min.js" type="text/javascript"></script>
@@ -63,41 +64,44 @@
         }
 
         @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
         }
 
         .animate-beat {
             animation: beat 1s infinite;
         }
-    </style>
-    <style>
-        #art-player {
-            width: 100%;
-            height: 550px;
-            background: #fff;
-            border-radius: 7px;
-            padding: 5px 0px;
+
+        /* Custom styles for player buttons */
+        #player-buttons .custom-card {
+            background-color: var(--bg-color, #ffffff);
+            /* Custom card background color */
+            transition: transform 0.2s ease-in-out;
         }
 
-        @media (max-width: 550px) {
-            #art-player {
-                width: 100%;
-                height: 300px;
-                background: #fff;
-                border-radius: 7px;
-                padding: 5px 0px;
-            }
-            strong {
-                font-size: 12px;
-            }
+        #player-buttons .custom-card:hover {
+            transform: scale(1.05);
         }
 
-        #player-buttons {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
+        #player-buttons .custom-btn {
+            background-color: var(--card-bg-color, #ffffff);
+            /* Custom default button background color */
+            color: var(--tg-theme-text-color, #222);
+            /* Custom default text color */
+        }
+
+        #player-buttons .custom-btn.selected {
+            background-color: #e74c3c;
+            /* Custom selected button background color */
+            color: var(--tg-theme-text-color, #222);
+            /* Custom selected text color */
         }
     </style>
 </head>
@@ -105,15 +109,21 @@
 <body>
     <section>
         <div class="flex gap-3 justify-center">
-            <button id="fullscreen_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
-                    <path d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
+            <button id="fullscreen_btn"
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                    <path
+                        d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
                 </svg>
                 Change Fullscreen
             </button>
-            <button id="reload_btn" class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
-                    <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+            <button id="reload_btn"
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
+                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                    <path
+                        d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
                 </svg>
                 Reload
             </button>
@@ -369,7 +379,7 @@
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
                 matchPlayer.innerHTML = `
-                    <div id="art-player"></div>
+                    <div id="art-player" class="w-full h-[550px] md:h-[300px] bg-black rounded-lg p-1 md:p-2"></div>
                     <div id="player-buttons"></div>`;
                 this.addPlayerButtons(match);
             },
@@ -465,20 +475,29 @@
                 const playerButtons = document.getElementById('player-buttons');
                 if (match.links && match.links.length > 0) {
                     const deviceType = this.detectAppleDevice();
+                    playerButtons.className = 'mt-3 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 justify-items-center px-4';
+                    playerButtons.innerHTML = '';
                     match.links.forEach((link, index) => {
                         if (link.url) {
                             const url = link.url;
                             const name = link.name;
-                            const btnUrl = this.generateStreamUrl(url, name); // Pass name to generateStreamUrl
+                            const btnUrl = this.generateStreamUrl(url, name);
+
+                            const card = document.createElement('div');
+                            card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[150px]'; // Use custom-card
+
                             const button = document.createElement('button');
-                            button.className = 'btn';
+                            button.className = 'custom-btn btn w-full h-full flex items-center justify-center p-2 text-sm font-bold rounded-lg'; // Use custom-btn
                             button.innerHTML = `<strong>${name}</strong>`;
-                            button.onclick = () => this.changeVideo(btnUrl); // Use this.changeVideo
+                            button.onclick = () => this.changeVideo(btnUrl);
+
                             if (index === 0) {
-                                button.classList.add('selected');
+                                button.classList.add('selected'); // Initial selected state
                                 this.initializePlayer(btnUrl);
                             }
-                            playerButtons.appendChild(button);
+
+                            card.appendChild(button);
+                            playerButtons.appendChild(card);
                         }
                     });
                 }
@@ -508,10 +527,14 @@
             },
 
             changeVideo(url) {
-                const buttons = document.querySelectorAll('#player-buttons .btn');
-                buttons.forEach(button => button.classList.remove('selected'));
-                const button = event.target.closest('.btn');
-                if (button) button.classList.add('selected');
+                const buttons = document.querySelectorAll('#player-buttons .custom-btn'); // Target custom-btn
+                buttons.forEach(button => {
+                    button.classList.remove('selected'); // Only remove selected class; custom CSS handles rest
+                });
+                const button = event.target.closest('.custom-btn');
+                if (button) {
+                    button.classList.add('selected'); // Add selected class; custom CSS applies styles
+                }
                 this.initializePlayer(url);
                 console.log('Changing video to:', url);
             },
@@ -520,4 +543,5 @@
         MMFotApp.init();
     </script>
 </body>
+
 </html>
