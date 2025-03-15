@@ -91,6 +91,7 @@
 
         const MMFotApp = {
             encryptionKey: "devxseven", // Should be stored securely, not hardcoded
+            showtime: 600000, // 10 minutes in milliseconds
             now: moment.tz("Asia/Yangon"),
 
             init() {
@@ -283,7 +284,7 @@
                 this.displayMatchDetails(match, distance);
 
                 // Check if the match is within 10 minutes
-                if (distance <= 600000) { // 10 minutes in milliseconds
+                if (distance <= this.showtime) { // 10 minutes in milliseconds
                     this.showArtPlayer(match);
                 } else {
                     // Show countdown
@@ -297,7 +298,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'card shadow-xl p-1 flex flex-col items-center';
-                const isLive = distance <= 600000; // Show LIVE only if within 10 minutes
+                const isLive = distance <= this.showtime; // Show LIVE only if within 10 minutes
                 card.innerHTML = `
                     <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
                     <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
@@ -335,7 +336,7 @@
                     this.updateCountdownUI(distance);
 
                     // Check if countdown has reached 10 minutes
-                    if (distance <= 600000) { // 10 minutes in milliseconds
+                    if (distance <= this.showtime) { // 10 minutes in milliseconds
                         clearInterval(countdownInterval);
                         this.displayMatchDetails(match, distance);
                         this.showArtPlayer(match);
