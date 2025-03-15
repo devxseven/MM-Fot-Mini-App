@@ -368,18 +368,30 @@
 
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
-                const artPlayer = document.createElement('div');
-                artPlayer.id = 'art-player';
-                artPlayer.className = 'w-full bg-black rounded-lg mt-3';
+                matchPlayer.innerHTML = `
+            <div id="art-player" class="w-full bg-black rounded-lg mt-3 py-1"></div>
+            <div id="player-buttons"></div>`;
 
-                // Calculate 40% of Telegram viewport height with fallback
-                const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight; // Fallback to window height
-                const customHeight = viewportHeight * 0.4;
-                artPlayer.style.height = `${customHeight}px`;
+                // Function to update art-player height dynamically
+                const updateHeight = () => {
+                    const artPlayer = document.getElementById('art-player');
+                    if (!artPlayer) return;
 
-                matchPlayer.innerHTML = '';
-                matchPlayer.appendChild(artPlayer);
-                matchPlayer.innerHTML += '<div id="player-buttons"></div>';
+                    const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
+                    const customHeight = viewportHeight * 0.4;
+                    artPlayer.style.height = `${customHeight}px`;
+                };
+
+                // Initial height set
+                updateHeight();
+
+                // Listen for viewport changes in Telegram Web App
+                Telegram.WebApp.onEvent('viewportChanged', updateHeight);
+
+                // Fallback: Listen for window resize
+                window.addEventListener('resize', updateHeight);
+
+                // Add player buttons
                 this.addPlayerButtons(match);
             },
 
