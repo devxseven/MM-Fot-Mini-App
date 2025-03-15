@@ -491,16 +491,12 @@
                         if (videoLeft) {
                             // Adjust positioning for .art-video
                             videoLeft.style.position = 'absolute';
-                            videoLeft.style.left = safeAreaOffset; // Shift left by offset
-                            videoLeft.style.width = `calc(100% - ${safeAreaOffset})`; // Reduce width to avoid full stretch
-                            videoLeft.style.marginLeft = ''; // Clear margin-left to avoid conflicts
+                            videoLeft.style.left = safeAreaOffset;
                         }
                         controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                     } else { // fullscreenWeb is false
                         if (videoLeft) {
                             videoLeft.style.left = '0'; // Reset to default
-                            videoLeft.style.width = '100%'; // Restore full width
-                            videoLeft.style.marginLeft = ''; // Ensure margin is cleared
                         }
                         controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
                     }
