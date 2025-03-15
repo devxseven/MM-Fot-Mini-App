@@ -486,12 +486,10 @@
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
                     if (state) { // fullscreenWeb is true
-                        const safeAreaOffset = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
-
                         if (videoLeft) {
                             // Adjust positioning for .art-video
                             videoLeft.style.position = 'absolute';
-                            videoLeft.style.left = `var(--tg-safe-area-inset-top, 0px)`;
+                            videoLeft.style.left = `var(--tg-content-safe-area-inset-top, 0px)`;
                         }
                         controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                     } else { // fullscreenWeb is false
