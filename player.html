@@ -79,29 +79,19 @@
             animation: beat 1s infinite;
         }
 
-        /* Custom styles for player buttons */
+        /* Custom styles for player cards */
         #player-buttons .custom-card {
             background-color: var(--bg-color, #ffffff);
-            /* Custom card background color */
-            transition: transform 0.2s ease-in-out;
+            color: var(--tg-theme-text-color, #222);
         }
 
         #player-buttons .custom-card:hover {
             transform: scale(1.05);
         }
 
-        #player-buttons .custom-btn {
-            background-color: var(--card-bg-color, #ffffff);
-            /* Custom default button background color */
-            color: var(--tg-theme-text-color, #222);
-            /* Custom default text color */
-        }
-
-        #player-buttons .custom-btn.selected {
-            background-color: #e74c3c;
-            /* Custom selected button background color */
-            color: var(--tg-theme-text-color, #222);
-            /* Custom selected text color */
+        #player-buttons .custom-card.selected {
+            background-color: #383838;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -378,9 +368,18 @@
 
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
-                matchPlayer.innerHTML = `
-                    <div id="art-player" class="w-full h-[550px] md:h-[300px] bg-black rounded-lg p-1 md:p-2"></div>
-                    <div id="player-buttons"></div>`;
+                const artPlayer = document.createElement('div');
+                artPlayer.id = 'art-player';
+                artPlayer.className = 'w-full bg-black rounded-lg mt-3';
+
+                // Calculate 40% of Telegram viewport height with fallback
+                const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight; // Fallback to window height
+                const customHeight = viewportHeight * 0.4;
+                artPlayer.style.height = `${customHeight}px`;
+
+                matchPlayer.innerHTML = '';
+                matchPlayer.appendChild(artPlayer);
+                matchPlayer.innerHTML += '<div id="player-buttons"></div>';
                 this.addPlayerButtons(match);
             },
 
@@ -475,7 +474,7 @@
                 const playerButtons = document.getElementById('player-buttons');
                 if (match.links && match.links.length > 0) {
                     const deviceType = this.detectAppleDevice();
-                    playerButtons.className = 'mt-3 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 justify-items-center px-4';
+                    playerButtons.className = 'my-2 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 justify-items-center px-4';
                     playerButtons.innerHTML = '';
                     match.links.forEach((link, index) => {
                         if (link.url) {
@@ -484,23 +483,32 @@
                             const btnUrl = this.generateStreamUrl(url, name);
 
                             const card = document.createElement('div');
-                            card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[150px]'; // Use custom-card
-
-                            const button = document.createElement('button');
-                            button.className = 'custom-btn btn w-full h-full flex items-center justify-center p-2 text-sm font-bold rounded-lg'; // Use custom-btn
-                            button.innerHTML = `<strong>${name}</strong>`;
-                            button.onclick = () => this.changeVideo(btnUrl);
+                            card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[150px] text-sm font-bold flex items-center justify-center p-2 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out';
+                            card.innerHTML = `<strong>${name}</strong>`;
+                            card.onclick = () => this.changeVideo(btnUrl);
 
                             if (index === 0) {
-                                button.classList.add('selected'); // Initial selected state
+                                card.classList.add('selected'); // Initial selected state
                                 this.initializePlayer(btnUrl);
                             }
 
-                            card.appendChild(button);
                             playerButtons.appendChild(card);
                         }
                     });
                 }
+            },
+
+            changeVideo(url) {
+                const cards = document.querySelectorAll('#player-buttons .custom-card');
+                cards.forEach(card => {
+                    card.classList.remove('selected'); // Remove selected class; custom CSS handles colors
+                });
+                const card = event.target.closest('.custom-card');
+                if (card) {
+                    card.classList.add('selected'); // Add selected class; custom CSS applies colors
+                }
+                this.initializePlayer(url);
+                console.log('Changing video to:', url);
             },
 
             generateStreamUrl(url, name) { // Added name parameter
@@ -526,18 +534,6 @@
                 return btnUrl;
             },
 
-            changeVideo(url) {
-                const buttons = document.querySelectorAll('#player-buttons .custom-btn'); // Target custom-btn
-                buttons.forEach(button => {
-                    button.classList.remove('selected'); // Only remove selected class; custom CSS handles rest
-                });
-                const button = event.target.closest('.custom-btn');
-                if (button) {
-                    button.classList.add('selected'); // Add selected class; custom CSS applies styles
-                }
-                this.initializePlayer(url);
-                console.log('Changing video to:', url);
-            },
         };
 
         MMFotApp.init();
