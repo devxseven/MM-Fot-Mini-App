@@ -369,7 +369,7 @@
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
                 matchPlayer.innerHTML = `
-            <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-1"></div>
+            <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
             <div id="player-buttons"></div>`;
 
                 // Function to update art-player height dynamically
@@ -495,7 +495,7 @@
                             const btnUrl = this.generateStreamUrl(url, name);
 
                             const card = document.createElement('div');
-                            card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[150px] text-sm md:text-base font-bold flex items-center justify-center p-2 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out';
+                            card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[150px] text-xs md:text-base font-bold flex items-center justify-center px-1 py-4 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out';
                             card.innerHTML = `<strong>${name}</strong>`;
                             card.onclick = () => this.changeVideo(btnUrl);
 
