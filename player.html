@@ -485,6 +485,11 @@
                     const artPlayer = document.getElementById('art-player');
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     const videoLeft = artPlayer.querySelector('.art-video');
+                    if (videoLeft) {
+                        alert('Video found');
+                    }else{
+                        alert('Video not found');
+                    }
                     if (state) { // fullscreenWeb is true
                         videoLeft.style.marginLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                         controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
