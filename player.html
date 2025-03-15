@@ -482,14 +482,14 @@
                 });
 
                 art.on('fullscreenWeb', (state) => {
-                    const artPlayer = document.getElementsByClassName('art-video');
-                    const artPlayerControl = document.getElementById('art-player');
-                    const controlsLeft = artPlayerControl.querySelector('.art-video-player.art-mobile .art-controls-left');
+                    const artPlayer = document.getElementById('art-player');
+                    const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
+                    const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
                     if (state) { // fullscreenWeb is true
-                        artPlayer.style.marginLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px))`;
-                        controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 10px)`;
+                        videoLeft.style.marginLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
+                        controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                     } else { // fullscreenWeb is false
-                        artPlayer.style.marginLeft = '0';
+                        videoLeft.style.marginLeft = '0';
                         controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
                     }
                 });
