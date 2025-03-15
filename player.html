@@ -82,6 +82,59 @@
             animation: beat 1s infinite;
         }
     </style>
+    <style>
+        #art-player {
+            width: 100%;
+            height: 550px;
+            background: #fff;
+            border-radius: 7px;
+            padding: 5px 0px;
+        }
+
+        @media (max-width: 550px) {
+
+            #art-player {
+                width: 100%;
+                height: 300px;
+                background: #fff;
+                border-radius: 7px;
+                padding: 5px 0px;
+            }
+
+            strong {
+                font-size: 12px;
+            }
+
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 5px 2px;
+            padding: 6px 15px;
+            background-color: #022125;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn.selected {
+            background-color: #03515e;
+            /* Color for the active button */
+            color: #fff;
+        }
+
+        .btn:visited {
+            color: #fff;
+        }
+
+        strong {
+            font-size: 16px;
+        }
+
+        #player-buttons {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -461,7 +514,7 @@
                     art.destroy();
                 }
                 art = new Artplayer({
-                    container: '#match-player',
+                    container: '#art-player',
                     url: initialUrl,  // Set initial URL dynamically
                     autoplay: true,
                     isLive: true,
@@ -575,7 +628,7 @@
             },
 
             changeVideo(url) {
-                const buttons = document.querySelectorAll('#myDiv .btn');
+                const buttons = document.querySelectorAll('#player-buttons .btn');
                 buttons.forEach(button => button.classList.remove('selected'));
                 // Add 'active' class to the clicked button
                 const button = event.target.closest('.btn');
