@@ -107,30 +107,6 @@
 
         }
 
-        .btn {
-            display: inline-block;
-            margin: 5px 2px;
-            padding: 6px 15px;
-            background-color: #022125;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .btn.selected {
-            background-color: #03515e;
-            /* Color for the active button */
-            color: #fff;
-        }
-
-        .btn:visited {
-            color: #fff;
-        }
-
-        strong {
-            font-size: 16px;
-        }
-
         #player-buttons {
             display: none;
         }
@@ -173,9 +149,10 @@
             encryptionKey: "devxseven", // Should be stored securely, not hardcoded
             showtime: 600000, // 10 minutes in milliseconds
             now: moment.tz("Asia/Yangon"),
-            authKey: generateAuthKey(), // Call generateAuthKey() here and store it
+            authKey: null, // Call generateAuthKey() here and store it
 
             init() {
+                this.authKey = generateAuthKey();
                 tg.ready();
                 tg.expand();
                 this.initBackButton();
