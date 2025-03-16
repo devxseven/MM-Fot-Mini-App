@@ -618,9 +618,8 @@
 
                 if (this.isWebFullscreen && this.isMobileDevice()) {
                     iframeWrapper.style.height = `${viewportWidth}px`;
-                    iframeWrapper.style.marginTop = `var(--tg-safe-area-inset-top, 0px)`;
                 } else if (this.isWebFullscreen) {
-                    iframeWrapper.style.height = '100%'; // Fullscreen in portrait mode
+                    iframeWrapper.style.height = `${viewportHeight}px`; // Fullscreen in portrait mode
                 } else {
                     iframeWrapper.style.height = `${viewportHeight * 0.4}px`; // Default height
                 }
