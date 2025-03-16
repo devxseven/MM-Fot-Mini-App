@@ -112,6 +112,11 @@
             overflow: hidden;
         }
 
+        .iframe-container.rotated {
+            left: var(--tg-safe-area-inset-top, 0px);
+            width: calc(100% - var(--tg-safe-area-inset-top, 0px));
+        }
+
         .iframe-container iframe {
             width: 100%;
             height: 100%;
@@ -445,7 +450,7 @@
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
                 matchPlayer.innerHTML = `
-            <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
+            <div id="art-player" class="w-full bg-black mt-4"></div>
             <div id="player-buttons"></div>`;
 
                 // Function to update art-player height dynamically
@@ -581,7 +586,8 @@
                 this.isRotated = !this.isRotated;
 
                 const iframeWrapper = document.getElementById('iframeWrapper');
-                if (!iframeWrapper) return;
+                const iframeContainer = document.querySelector('.iframe-container');
+                if (!iframeWrapper || !iframeContainer) return;
 
                 if (this.isWebFullscreen) {
                     iframeWrapper.classList.add('web-fullscreen');
@@ -592,16 +598,17 @@
                 if (this.isMobileDevice()) {
                     if (this.isRotated) {
                         iframeWrapper.classList.add('rotated');
+                        iframeContainer.classList.add('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
                         if (iframeBtn) iframeBtn.textContent = 'Undo Rotate';
                     } else {
                         iframeWrapper.classList.remove('rotated');
+                        iframeContainer.classList.remove('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
                         if (iframeBtn) iframeBtn.textContent = 'Toggle Rotate';
                     }
                 }
 
-                // Update height after toggling fullscreen
                 this.updateIframeHeight();
             },
 
