@@ -93,6 +93,74 @@
             background-color: #2f2f2f;
             color: #ffffff;
         }
+
+        /* Custom CSS for Iframe Rotation and Fullscreen */
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 315px; /* Default height for iframe */
+            transition: all 0.3s ease;
+        }
+
+        .iframe-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .iframe-wrapper.web-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background-color: #000;
+        }
+
+        .iframe-wrapper.web-fullscreen.rotated {
+            transform: rotate(90deg) scale(1);
+            width: 100vh;
+            height: 100vw;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        .iframe-button {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background-color: #ff5733;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10001;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            padding: 0;
+            line-height: 40px;
+            text-align: center;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .iframe-wrapper.web-fullscreen .iframe-button {
+            bottom: 20px;
+        }
     </style>
 </head>
 
@@ -444,7 +512,7 @@
                         index: 20,
                         tooltip: 'Reload',
                         click: function () {
-                            art.url = initialUrl; // Corrected from art.switch to art.url
+                            art.url = initialUrl;
                         },
                     }, {
                         position: 'left',
@@ -487,16 +555,89 @@
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
                     if (state) { // fullscreenWeb is true
                         if (videoLeft) {
-                            // Adjust positioning for .art-video
                             videoLeft.style.position = 'absolute';
                             videoLeft.style.left = `var(--tg-safe-area-inset-top, 0px)`;
                         }
                         controlsLeft.style.paddingLeft = `calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px)`;
                     } else { // fullscreenWeb is false
                         if (videoLeft) {
-                            videoLeft.style.left = '0'; // Reset to default
+                            videoLeft.style.left = '0';
                         }
-                        controlsLeft.style.paddingLeft = '0'; // Reset padding when exiting fullscreen
+                        controlsLeft.style.paddingLeft = '0';
+                    }
+                });
+            },
+
+            initializeIframePlayer(iframeCode) {
+                const matchPlayer = document.getElementById('match-player');
+                matchPlayer.innerHTML = `
+                    <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
+                    <div id="player-buttons"></div>`;
+
+                const artPlayer = document.getElementById('art-player');
+                artPlayer.innerHTML = `
+                    <div class="iframe-wrapper" id="iframeWrapper">
+                        <div class="iframe-container">
+                            ${iframeCode}
+                        </div>
+                        <button class="iframe-button" id="iframeBtn">Toggle Rotate</button>
+                    </div>`;
+
+                // Function to update iframe height dynamically
+                const updateHeight = () => {
+                    const iframeWrapper = document.getElementById('iframeWrapper');
+                    if (!iframeWrapper) return;
+
+                    const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
+                    const customHeight = viewportHeight * 0.4;
+                    iframeWrapper.style.height = `${customHeight}px`;
+                };
+
+                // Initial height set
+                updateHeight();
+
+                // Listen for viewport changes in Telegram Web App
+                Telegram.WebApp.onEvent('viewportChanged', updateHeight);
+
+                // Fallback: Listen for window resize
+                window.addEventListener('resize', updateHeight);
+
+                // Add rotation and fullscreen functionality
+                const iframeWrapper = document.getElementById('iframeWrapper');
+                const iframeBtn = document.getElementById('iframeBtn');
+                let isWebFullscreen = false;
+                let isRotated = false;
+
+                function isMobileDevice() {
+                    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+                }
+
+                function toggleRotation() {
+                    isWebFullscreen = !isWebFullscreen;
+                    isRotated = !isRotated;
+
+                    if (isWebFullscreen) {
+                        iframeWrapper.classList.add('web-fullscreen');
+                    } else {
+                        iframeWrapper.classList.remove('web-fullscreen');
+                    }
+
+                    if (isMobileDevice()) {
+                        if (isRotated) {
+                            iframeWrapper.classList.add('rotated');
+                            iframeBtn.textContent = 'Undo Rotate';
+                        } else {
+                            iframeWrapper.classList.remove('rotated');
+                            iframeBtn.textContent = 'Toggle Rotate';
+                        }
+                    }
+                }
+
+                iframeBtn.addEventListener('click', toggleRotation);
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && isWebFullscreen) {
+                        toggleRotation();
                     }
                 });
             },
@@ -511,16 +652,36 @@
                         if (link.url) {
                             const url = link.url;
                             const name = link.name;
-                            const btnUrl = this.generateStreamUrl(url, name);
 
                             const card = document.createElement('div');
                             card.className = 'custom-card card shadow-lg rounded-lg w-full max-w-[200px] text-xs md:text-base font-bold flex items-center justify-center py-4 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out';
-                            card.innerHTML = `<strong>${name}</strong>`; 15
-                            card.onclick = () => this.changeVideo(btnUrl);
+                            card.innerHTML = `<strong>${name}</strong>`;
 
-                            if (index === 0) {
-                                card.classList.add('selected'); // Initial selected state
-                                this.initializePlayer(btnUrl);
+                            if (url.startsWith('<iframe')) {
+                                // Handle iframe links
+                                card.onclick = () => {
+                                    const cards = document.querySelectorAll('#player-buttons .custom-card');
+                                    cards.forEach(c => c.classList.remove('selected'));
+                                    card.classList.add('selected');
+                                    this.initializeIframePlayer(url);
+                                };
+                                if (index === 0) {
+                                    card.classList.add('selected');
+                                    this.initializeIframePlayer(url);
+                                }
+                            } else {
+                                // Handle stream URLs
+                                const btnUrl = this.generateStreamUrl(url, name);
+                                card.onclick = () => {
+                                    const cards = document.querySelectorAll('#player-buttons .custom-card');
+                                    cards.forEach(c => c.classList.remove('selected'));
+                                    card.classList.add('selected');
+                                    this.initializePlayer(btnUrl);
+                                };
+                                if (index === 0) {
+                                    card.classList.add('selected');
+                                    this.initializePlayer(btnUrl);
+                                }
                             }
 
                             playerButtons.appendChild(card);
@@ -529,20 +690,7 @@
                 }
             },
 
-            changeVideo(url) {
-                const cards = document.querySelectorAll('#player-buttons .custom-card');
-                cards.forEach(card => {
-                    card.classList.remove('selected'); // Remove selected class; custom CSS handles colors
-                });
-                const card = event.target.closest('.custom-card');
-                if (card) {
-                    card.classList.add('selected'); // Add selected class; custom CSS applies colors
-                }
-                this.initializePlayer(url);
-                console.log('Changing video to:', url);
-            },
-
-            generateStreamUrl(url, name) { // Added name parameter
+            generateStreamUrl(url, name) {
                 let btnUrl = '';
                 const deviceType = this.detectAppleDevice();
                 if (url.includes('http')) {
