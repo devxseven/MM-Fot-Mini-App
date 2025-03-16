@@ -204,6 +204,8 @@
             showtime: 600000,
             now: moment.tz("Asia/Yangon"),
             authKey: null,
+            isWebFullscreen: false, // Moved outside to persist across calls
+            isRotated: false, // Moved outside to persist across calls
 
             init() {
                 this.authKey = this.generateAuthKey();
@@ -221,7 +223,12 @@
             initBackButton() {
                 tg.BackButton.show();
                 tg.BackButton.onClick(() => {
-                    window.history.back();
+                    if (this.isWebFullscreen) {
+                        // Ensure state is reset to non-fullscreen and non-rotated
+                        this.toggleRotation();
+                    } else {
+                        window.history.back();
+                    }
                 });
             },
 
@@ -569,9 +576,53 @@
                 });
             },
 
+            toggleRotation() {
+                this.isWebFullscreen = !this.isWebFullscreen;
+                this.isRotated = !this.isRotated;
+
+                const iframeWrapper = document.getElementById('iframeWrapper');
+                if (!iframeWrapper) return;
+
+                if (this.isWebFullscreen) {
+                    iframeWrapper.classList.add('web-fullscreen');
+                } else {
+                    iframeWrapper.classList.remove('web-fullscreen');
+                }
+
+                function isMobileDevice() {
+                    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+                }
+
+                if (isMobileDevice()) {
+                    if (this.isRotated) {
+                        iframeWrapper.classList.add('rotated');
+                        const iframeBtn = document.getElementById('iframeBtn');
+                        if (iframeBtn) iframeBtn.textContent = 'Undo Rotate';
+                    } else {
+                        iframeWrapper.classList.remove('rotated');
+                        const iframeBtn = document.getElementById('iframeBtn');
+                        if (iframeBtn) iframeBtn.textContent = 'Toggle Rotate';
+                    }
+                }
+
+                // Update height after toggling fullscreen
+                this.updateIframeHeight();
+            },
+
+            updateIframeHeight() {
+                const iframeWrapper = document.getElementById('iframeWrapper');
+                if (!iframeWrapper) return;
+
+                const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
+                iframeWrapper.style.height = this.isWebFullscreen ? '100%' : `${viewportHeight * 0.4}px`;
+            },
+
             initializeIframePlayer(iframeCode) {
-                let isWebFullscreen = false;
-                let isRotated = false;
+                const matchPlayer = document.getElementById('match-player');
+                matchPlayer.innerHTML = `
+                    <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
+                    <div id="player-buttons"></div>`;
+
                 const artPlayer = document.getElementById('art-player');
                 artPlayer.innerHTML = `
                     <div class="iframe-wrapper" id="iframeWrapper">
@@ -581,73 +632,24 @@
                         <button class="iframe-button" id="iframeBtn">Toggle Rotate</button>
                     </div>`;
 
-                // Function to update iframe height dynamically
-                const updateHeight = () => {
-                    const iframeWrapper = document.getElementById('iframeWrapper');
-                    if (!iframeWrapper) return;
-
-                    const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
-                    const customHeight = isWebFullscreen ? viewportHeight : viewportHeight * 0.4;
-                    iframeWrapper.style.height = `${customHeight}px`;
-                };
-
                 // Initial height set
-                updateHeight();
+                this.updateIframeHeight();
 
                 // Listen for viewport changes in Telegram Web App
-                Telegram.WebApp.onEvent('viewportChanged', updateHeight);
+                Telegram.WebApp.onEvent('viewportChanged', () => this.updateIframeHeight());
 
                 // Fallback: Listen for window resize
-                window.addEventListener('resize', updateHeight);
+                window.addEventListener('resize', () => this.updateIframeHeight());
 
                 // Add rotation and fullscreen functionality
-                const iframeWrapper = document.getElementById('iframeWrapper');
                 const iframeBtn = document.getElementById('iframeBtn');
-
-                function isMobileDevice() {
-                    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-                }
-
-                function toggleRotation() {
-                    isWebFullscreen = !isWebFullscreen;
-                    isRotated = !isRotated;
-
-                    if (isWebFullscreen) {
-                        iframeWrapper.classList.add('web-fullscreen');
-                    } else {
-                        iframeWrapper.classList.remove('web-fullscreen');
-                    }
-
-                    if (isMobileDevice()) {
-                        if (isRotated) {
-                            iframeWrapper.classList.add('rotated');
-                            iframeBtn.textContent = 'Undo Rotate';
-                        } else {
-                            iframeWrapper.classList.remove('rotated');
-                            iframeBtn.textContent = 'Toggle Rotate';
-                        }
-                    }
-                }
-
-                iframeBtn.addEventListener('click', toggleRotation);
+                iframeBtn.addEventListener('click', () => this.toggleRotation());
 
                 document.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape' && isWebFullscreen) {
-                        toggleRotation();
+                    if (event.key === 'Escape' && this.isWebFullscreen) {
+                        this.toggleRotation();
                     }
                 });
-
-                // Handle Telegram Web App back button on mobile to exit fullscreen and rotation
-                if (isMobileDevice()) {
-                    Telegram.WebApp.BackButton.onClick(() => {
-                        if (isWebFullscreen) {
-                            // Ensure state is reset to non-fullscreen and non-rotated
-                            isWebFullscreen = true; // Set to true to toggle to false in toggleRotation
-                            isRotated = true; // Set to true to toggle to false in toggleRotation
-                            toggleRotation();
-                        }
-                    });
-                }
             },
 
             addPlayerButtons(match) {
