@@ -147,19 +147,19 @@
         .iframe-button {
             position: absolute;
             width: 100px;
-            height: 40px;
-            background-color: #ff5733;
+            height: 30px;
+            background-color: #222;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             z-index: 10001;
             transition: all 0.3s ease;
-            font-size: 14px;
+            font-size: 12px;
             padding: 0;
-            line-height: 40px;
+            line-height: 30px;
             text-align: center;
-            bottom: 10px;
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
         }
@@ -450,7 +450,7 @@
             showArtPlayer(match) {
                 const matchPlayer = document.getElementById('match-player');
                 matchPlayer.innerHTML = `
-            <div id="art-player" class="w-full bg-black mt-4"></div>
+            <div id="art-player" class="w-full bg-black my-4"></div>
             <div id="player-buttons"></div>`;
 
                 // Function to update art-player height dynamically
@@ -592,14 +592,11 @@
                 if (this.isWebFullscreen) {
                     iframeWrapper.classList.add('web-fullscreen');
                     const iframeBtn = document.getElementById('iframeBtn');
-                    if (iframeBtn) iframeBtn.style.display = 'none';
+                    if (iframeBtn) iframeBtn.textContent = 'Exit';
                 } else {
                     iframeWrapper.classList.remove('web-fullscreen');
                     const iframeBtn = document.getElementById('iframeBtn');
-                    if (iframeBtn) {
-                        iframeBtn.style.display = 'block';
-                        iframeBtn.textContent = 'Fullscreen';
-                    }
+                    if (iframeBtn) iframeBtn.textContent = 'Fullscreen';
                 }
 
                 if (this.isMobileDevice()) {
@@ -607,15 +604,12 @@
                         iframeWrapper.classList.add('rotated');
                         iframeContainer.classList.add('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) iframeBtn.style.display = 'none';
+                        if (iframeBtn) iframeBtn.textContent = 'Exit';
                     } else {
                         iframeWrapper.classList.remove('rotated');
                         iframeContainer.classList.remove('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) {
-                            iframeBtn.style.display = 'block';
-                            iframeBtn.textContent = 'Fullscreen';
-                        }
+                        if (iframeBtn) iframeBtn.textContent = 'Fullscreen';
                     }
                 }
 
