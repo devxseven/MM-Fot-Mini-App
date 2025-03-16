@@ -570,14 +570,16 @@
             },
 
             initializeIframePlayer(iframeCode) {
+                let isWebFullscreen = false;
+                let isRotated = false;
                 const artPlayer = document.getElementById('art-player');
                 artPlayer.innerHTML = `
-        <div class="iframe-wrapper" id="iframeWrapper">
-            <div class="iframe-container">
-                ${iframeCode}
-            </div>
-            <button class="iframe-button" id="iframeBtn">Toggle Rotate</button>
-        </div>`;
+                    <div class="iframe-wrapper" id="iframeWrapper">
+                        <div class="iframe-container">
+                            ${iframeCode}
+                        </div>
+                        <button class="iframe-button" id="iframeBtn">Toggle Rotate</button>
+                    </div>`;
 
                 // Function to update iframe height dynamically
                 const updateHeight = () => {
@@ -601,8 +603,6 @@
                 // Add rotation and fullscreen functionality
                 const iframeWrapper = document.getElementById('iframeWrapper');
                 const iframeBtn = document.getElementById('iframeBtn');
-                let isWebFullscreen = false;
-                let isRotated = false;
 
                 function isMobileDevice() {
                     return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -627,14 +627,10 @@
                             iframeBtn.textContent = 'Toggle Rotate';
                         }
                     }
-
-                    // Update height after toggling fullscreen
-                    updateHeight();
                 }
 
                 iframeBtn.addEventListener('click', toggleRotation);
 
-                // Handle Escape key to exit fullscreen
                 document.addEventListener('keydown', (event) => {
                     if (event.key === 'Escape' && isWebFullscreen) {
                         toggleRotation();
