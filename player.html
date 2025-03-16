@@ -614,15 +614,18 @@
                 if (!iframeWrapper) return;
 
                 const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
-                iframeWrapper.style.height = this.isWebFullscreen ? '100%' : `${viewportHeight * 0.4}px`;
+                const viewportWidth = Telegram.WebApp.viewportWidth || window.innerWidth;
+
+                if (this.isWebFullscreen && this.isRotated) {
+                    iframeWrapper.style.height = `${viewportWidth}px`; // Fullscreen in landscape mode
+                } else if (this.isWebFullscreen) {
+                    iframeWrapper.style.height = '100%'; // Fullscreen in portrait mode
+                } else {
+                    iframeWrapper.style.height = `${viewportHeight * 0.4}px`; // Default height
+                }
             },
 
             initializeIframePlayer(iframeCode) {
-                const matchPlayer = document.getElementById('match-player');
-                matchPlayer.innerHTML = `
-                    <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
-                    <div id="player-buttons"></div>`;
-
                 const artPlayer = document.getElementById('art-player');
                 artPlayer.innerHTML = `
                     <div class="iframe-wrapper" id="iframeWrapper">
