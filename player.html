@@ -591,8 +591,15 @@
 
                 if (this.isWebFullscreen) {
                     iframeWrapper.classList.add('web-fullscreen');
+                    const iframeBtn = document.getElementById('iframeBtn');
+                    if (iframeBtn) iframeBtn.style.display = 'none';
                 } else {
                     iframeWrapper.classList.remove('web-fullscreen');
+                    const iframeBtn = document.getElementById('iframeBtn');
+                    if (iframeBtn) {
+                        iframeBtn.style.display = 'block';
+                        iframeBtn.textContent = 'Fullscreen';
+                    }
                 }
 
                 if (this.isMobileDevice()) {
@@ -600,12 +607,15 @@
                         iframeWrapper.classList.add('rotated');
                         iframeContainer.classList.add('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) iframeBtn.textContent = 'Undo Rotate';
+                        if (iframeBtn) iframeBtn.style.display = 'none';
                     } else {
                         iframeWrapper.classList.remove('rotated');
                         iframeContainer.classList.remove('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) iframeBtn.textContent = 'Toggle Rotate';
+                        if (iframeBtn) {
+                            iframeBtn.style.display = 'block';
+                            iframeBtn.textContent = 'Fullscreen';
+                        }
                     }
                 }
 
