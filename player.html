@@ -589,11 +589,7 @@
                     iframeWrapper.classList.remove('web-fullscreen');
                 }
 
-                function isMobileDevice() {
-                    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-                }
-
-                if (isMobileDevice()) {
+                if (this.isMobileDevice()) {
                     if (this.isRotated) {
                         iframeWrapper.classList.add('rotated');
                         const iframeBtn = document.getElementById('iframeBtn');
@@ -609,6 +605,10 @@
                 this.updateIframeHeight();
             },
 
+            isMobileDevice() {
+                return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+            },
+
             updateIframeHeight() {
                 const iframeWrapper = document.getElementById('iframeWrapper');
                 if (!iframeWrapper) return;
@@ -616,8 +616,10 @@
                 const viewportHeight = Telegram.WebApp.viewportHeight || window.innerHeight;
                 const viewportWidth = Telegram.WebApp.viewportWidth || window.innerWidth;
 
-                if (this.isWebFullscreen && this.isRotated) {
+                if (this.isWebFullscreen && this.isMobileDevice()) {
                     iframeWrapper.style.height = `${viewportWidth}px`; // Fullscreen in landscape mode
+                    iframeWrapper.style.position = 'absolute';
+                    iframeWrapper.style.left = `var(--tg-safe-area-inset-top, 0px)`;
                 } else if (this.isWebFullscreen) {
                     iframeWrapper.style.height = '100%'; // Fullscreen in portrait mode
                 } else {
@@ -626,6 +628,11 @@
             },
 
             initializeIframePlayer(iframeCode) {
+                const matchPlayer = document.getElementById('match-player');
+                matchPlayer.innerHTML = `
+                    <div id="art-player" class="w-full bg-black rounded-lg mt-4 py-2"></div>
+                    <div id="player-buttons"></div>`;
+
                 const artPlayer = document.getElementById('art-player');
                 artPlayer.innerHTML = `
                     <div class="iframe-wrapper" id="iframeWrapper">
