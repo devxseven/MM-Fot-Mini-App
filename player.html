@@ -633,18 +633,19 @@
                     }
                 });
 
-                // Handle button visibility when in fullscreen
+                // Manage button visibility
                 this.manageIframeButtonVisibility();
             },
 
             manageIframeButtonVisibility() {
                 const iframeBtn = document.getElementById('iframeBtn');
+                const iframeWrapper = document.getElementById('iframeWrapper');
                 let timeoutId = null;
 
                 const showButton = () => {
                     if (this.isWebFullscreen) {
                         iframeBtn.style.display = 'block';
-                        clearTimeout(timeoutId); // Clear any existing timeout
+                        clearTimeout(timeoutId);
                         timeoutId = setTimeout(() => {
                             iframeBtn.style.display = 'none';
                         }, 5000); // Hide after 5 seconds
@@ -660,26 +661,25 @@
                 // Show button initially for 5 seconds when entering fullscreen
                 if (this.isWebFullscreen) {
                     showButton();
+                } else {
+                    iframeBtn.style.display = 'block'; // Ensure visible when not in fullscreen
                 }
 
-                // Add event listeners for user interaction
-                document.addEventListener('click', () => {
+                // Remove any existing listeners to avoid duplicates (optional cleanup)
+                iframeWrapper.removeEventListener('click', this.handleInteraction);
+                iframeWrapper.removeEventListener('touchstart', this.handleInteraction);
+
+                // Define interaction handler with proper context
+                this.handleInteraction = () => {
                     if (this.isWebFullscreen) {
+                        console.log('Interaction detected'); // Debug log
                         showButton();
                     }
-                });
+                };
 
-                document.addEventListener('touchstart', () => {
-                    if (this.isWebFullscreen) {
-                        showButton();
-                    }
-                });
-
-                // Update button visibility when exiting fullscreen
-                if (!this.isWebFullscreen) {
-                    iframeBtn.style.display = 'block'; // Always show when not in fullscreen
-                    clearTimeout(timeoutId);
-                }
+                // Add event listeners to iframeWrapper instead of document
+                iframeWrapper.addEventListener('click', this.handleInteraction);
+                iframeWrapper.addEventListener('touchstart', this.handleInteraction);
             },
 
             toggleRotation() {
