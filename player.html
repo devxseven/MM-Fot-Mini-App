@@ -681,14 +681,6 @@
                     }
                 };
 
-                // Initial button state
-                if (this.isWebFullscreen) {
-                    showButton(); // Show "Exit" for 5 seconds in fullscreen
-                } else {
-                    iframeBtn.style.display = 'block'; // Always show "Fullscreen" when not in fullscreen
-                    clearTimeout(timeoutId); // Clear any existing timeout
-                }
-
                 // Remove any existing listeners to avoid duplicates
                 if (overlay) {
                     overlay.removeEventListener('click', this.handleInteraction);
@@ -708,6 +700,14 @@
                     overlay.addEventListener('click', this.handleInteraction);
                     overlay.addEventListener('touchstart', this.handleInteraction);
                 }
+
+                // Initial button state
+                if (this.isWebFullscreen) {
+                    showButton(); // Show "Exit" for 5 seconds in fullscreen
+                } else {
+                    iframeBtn.style.display = 'block'; // Always show "Fullscreen" when not in fullscreen
+                    clearTimeout(timeoutId); // Clear any existing timeout
+                }
             },
 
             toggleRotation() {
@@ -726,7 +726,7 @@
                     this.manageIframeButtonVisibility(); // Manage visibility when entering fullscreen
                 } else {
                     iframeWrapper.classList.remove('web-fullscreen');
-                    iframeBtn.textContent = 'Fullscreen';
+                    iframeBtn.textContent = 'Fullscreen 1';
                     iframeBtn.style.display = 'block'; // Ensure "Fullscreen" is always visible
                     this.manageIframeButtonVisibility(); // Update visibility state
                 }
@@ -740,7 +740,7 @@
                     } else {
                         iframeWrapper.classList.remove('rotated');
                         iframeContainer.classList.remove('rotated');
-                        iframeBtn.textContent = 'Fullscreen';
+                        iframeBtn.textContent = 'Fullscreen 1';
                         iframeBtn.style.display = 'block'; // Ensure "Fullscreen" is always visible
                         this.manageIframeButtonVisibility(); // Update visibility state
                     }
