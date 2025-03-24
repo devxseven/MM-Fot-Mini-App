@@ -632,7 +632,7 @@
                 ${iframeCode}
             </div>
             <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000;"></div>
-            <button class="iframe-button" id="iframeBtn">Fullscreen1</button>
+            <button class="iframe-button" id="iframeBtn">Fullscreen</button>
         </div>`;
 
                 // Initial height set
@@ -728,7 +728,7 @@
                     this.manageIframeButtonVisibility(); // Manage visibility when entering fullscreen
                 } else {
                     iframeWrapper.classList.remove('web-fullscreen');
-                    iframeBtn.textContent = 'Fullscreen1';
+                    iframeBtn.textContent = 'Fullscreen';
                     iframeBtn.style.display = 'block'; // Ensure "Fullscreen" is always visible
                     this.manageIframeButtonVisibility(); // Update visibility state
                 }
@@ -742,7 +742,7 @@
                     } else {
                         iframeWrapper.classList.remove('rotated');
                         iframeContainer.classList.remove('rotated');
-                        iframeBtn.textContent = 'Fullscreen1';
+                        iframeBtn.textContent = 'Fullscreen';
                         iframeBtn.style.display = 'block'; // Ensure "Fullscreen" is always visible
                         this.manageIframeButtonVisibility(); // Update visibility state
                     }
