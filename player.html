@@ -169,6 +169,21 @@
         .iframe-wrapper.web-fullscreen .iframe-button {
             bottom: 20px;
         }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: transparent;
+            /* Optional: keep it invisible */
+        }
+
+        .iframe-container iframe {
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -611,6 +626,7 @@
             <div class="iframe-container">
                 ${iframeCode}
             </div>
+            <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000;"></div>
             <button class="iframe-button" id="iframeBtn">Fullscreen</button>
         </div>`;
 
@@ -639,7 +655,7 @@
 
             manageIframeButtonVisibility() {
                 const iframeBtn = document.getElementById('iframeBtn');
-                const iframeWrapper = document.getElementById('iframeWrapper');
+                const overlay = document.getElementById('overlay');
                 let timeoutId = null;
 
                 const showButton = () => {
@@ -665,9 +681,11 @@
                     iframeBtn.style.display = 'block'; // Ensure visible when not in fullscreen
                 }
 
-                // Remove any existing listeners to avoid duplicates (optional cleanup)
-                iframeWrapper.removeEventListener('click', this.handleInteraction);
-                iframeWrapper.removeEventListener('touchstart', this.handleInteraction);
+                // Remove any existing listeners to avoid duplicates
+                if (overlay) {
+                    overlay.removeEventListener('click', this.handleInteraction);
+                    overlay.removeEventListener('touchstart', this.handleInteraction);
+                }
 
                 // Define interaction handler with proper context
                 this.handleInteraction = () => {
@@ -677,9 +695,11 @@
                     }
                 };
 
-                // Add event listeners to iframeWrapper instead of document
-                iframeWrapper.addEventListener('click', this.handleInteraction);
-                iframeWrapper.addEventListener('touchstart', this.handleInteraction);
+                // Add event listeners to overlay instead of iframeWrapper
+                if (overlay) {
+                    overlay.addEventListener('click', this.handleInteraction);
+                    overlay.addEventListener('touchstart', this.handleInteraction);
+                }
             },
 
             toggleRotation() {
