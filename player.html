@@ -162,6 +162,8 @@
             bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
+            display: block;
+            /* Explicitly set default display */
         }
 
         .iframe-wrapper.web-fullscreen .iframe-button {
@@ -581,41 +583,6 @@
                 });
             },
 
-            toggleRotation() {
-                this.isWebFullscreen = !this.isWebFullscreen;
-                this.isRotated = !this.isRotated;
-
-                const iframeWrapper = document.getElementById('iframeWrapper');
-                const iframeContainer = document.querySelector('.iframe-container');
-                if (!iframeWrapper || !iframeContainer) return;
-
-                if (this.isWebFullscreen) {
-                    iframeWrapper.classList.add('web-fullscreen');
-                    const iframeBtn = document.getElementById('iframeBtn');
-                    if (iframeBtn) iframeBtn.textContent = 'Exit';
-                } else {
-                    iframeWrapper.classList.remove('web-fullscreen');
-                    const iframeBtn = document.getElementById('iframeBtn');
-                    if (iframeBtn) iframeBtn.textContent = 'Fullscreen';
-                }
-
-                if (this.isMobileDevice()) {
-                    if (this.isRotated) {
-                        iframeWrapper.classList.add('rotated');
-                        iframeContainer.classList.add('rotated');
-                        const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) iframeBtn.textContent = 'Exit';
-                    } else {
-                        iframeWrapper.classList.remove('rotated');
-                        iframeContainer.classList.remove('rotated');
-                        const iframeBtn = document.getElementById('iframeBtn');
-                        if (iframeBtn) iframeBtn.textContent = 'Fullscreen';
-                    }
-                }
-
-                this.updateIframeHeight();
-            },
-
             isMobileDevice() {
                 return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
             },
@@ -636,15 +603,16 @@
                 }
             },
 
+            // Inside MMFotApp object
             initializeIframePlayer(iframeCode) {
                 const artPlayer = document.getElementById('art-player');
                 artPlayer.innerHTML = `
-                    <div class="iframe-wrapper" id="iframeWrapper">
-                        <div class="iframe-container">
-                            ${iframeCode}
-                        </div>
-                        <button class="iframe-button" id="iframeBtn">Fullscreen</button>
-                    </div>`;
+        <div class="iframe-wrapper" id="iframeWrapper">
+            <div class="iframe-container">
+                ${iframeCode}
+            </div>
+            <button class="iframe-button" id="iframeBtn">Fullscreen</button>
+        </div>`;
 
                 // Initial height set
                 this.updateIframeHeight();
@@ -664,6 +632,91 @@
                         this.toggleRotation();
                     }
                 });
+
+                // Handle button visibility when in fullscreen
+                this.manageIframeButtonVisibility();
+            },
+
+            manageIframeButtonVisibility() {
+                const iframeBtn = document.getElementById('iframeBtn');
+                let timeoutId = null;
+
+                const showButton = () => {
+                    if (this.isWebFullscreen) {
+                        iframeBtn.style.display = 'block';
+                        clearTimeout(timeoutId); // Clear any existing timeout
+                        timeoutId = setTimeout(() => {
+                            iframeBtn.style.display = 'none';
+                        }, 5000); // Hide after 5 seconds
+                    }
+                };
+
+                const hideButton = () => {
+                    if (this.isWebFullscreen) {
+                        iframeBtn.style.display = 'none';
+                    }
+                };
+
+                // Show button initially for 5 seconds when entering fullscreen
+                if (this.isWebFullscreen) {
+                    showButton();
+                }
+
+                // Add event listeners for user interaction
+                document.addEventListener('click', () => {
+                    if (this.isWebFullscreen) {
+                        showButton();
+                    }
+                });
+
+                document.addEventListener('touchstart', () => {
+                    if (this.isWebFullscreen) {
+                        showButton();
+                    }
+                });
+
+                // Update button visibility when exiting fullscreen
+                if (!this.isWebFullscreen) {
+                    iframeBtn.style.display = 'block'; // Always show when not in fullscreen
+                    clearTimeout(timeoutId);
+                }
+            },
+
+            toggleRotation() {
+                this.isWebFullscreen = !this.isWebFullscreen;
+                this.isRotated = !this.isRotated;
+
+                const iframeWrapper = document.getElementById('iframeWrapper');
+                const iframeContainer = document.querySelector('.iframe-container');
+                const iframeBtn = document.getElementById('iframeBtn');
+
+                if (!iframeWrapper || !iframeContainer || !iframeBtn) return;
+
+                if (this.isWebFullscreen) {
+                    iframeWrapper.classList.add('web-fullscreen');
+                    iframeBtn.textContent = 'Exit';
+                    this.manageIframeButtonVisibility(); // Manage visibility when entering fullscreen
+                } else {
+                    iframeWrapper.classList.remove('web-fullscreen');
+                    iframeBtn.textContent = 'Fullscreen';
+                    iframeBtn.style.display = 'block'; // Ensure button is visible when exiting fullscreen
+                }
+
+                if (this.isMobileDevice()) {
+                    if (this.isRotated) {
+                        iframeWrapper.classList.add('rotated');
+                        iframeContainer.classList.add('rotated');
+                        iframeBtn.textContent = 'Exit';
+                        this.manageIframeButtonVisibility(); // Manage visibility when rotated
+                    } else {
+                        iframeWrapper.classList.remove('rotated');
+                        iframeContainer.classList.remove('rotated');
+                        iframeBtn.textContent = 'Fullscreen';
+                        iframeBtn.style.display = 'block';
+                    }
+                }
+
+                this.updateIframeHeight();
             },
 
             addPlayerButtons(match) {
