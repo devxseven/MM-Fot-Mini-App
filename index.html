@@ -325,11 +325,11 @@
 
                     card.addEventListener('click', () => {
                         if (match.id) {
+
                             show_8885856().then(() => {
                                 window.location.href = `player.html?id=${match.id}`;
-                            }).catch(e => {
-                                window.location.href = `player.html?id=${match.id}`;
-                            });
+                            })
+
                         }
                     });
 
