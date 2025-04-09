@@ -240,10 +240,25 @@
                 tg.expand();
                 this.initBackButton();
                 this.initFullscreen();
-                this.initReload();
+                this.initReload();     
+                this.initAds();
                 this.loadMatch().catch(error => {
                     console.error('Error initializing app:', error);
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
+                });
+
+            },
+
+            initAds() {
+                show_8885856({
+                    type: 'inApp',
+                    inAppSettings: {
+                        frequency: 2,
+                        capping: 0.1,
+                        interval: 30,
+                        timeout: 5,
+                        everyPage: false
+                    }
                 });
             },
 
