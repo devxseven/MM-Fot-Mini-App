@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/8.0.0-beta.3/hls.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
-    <script src='//whephiwums.com/sdk.js' data-zone='8885856' data-sdk='show_8885856'></script>
+    <script async data-onclicka-banner="315709" src="https://js.onclckmn.com/banner/oncbanner.m.js" data-onclicka-banner-ar="c"></script>
     <style>
         html {
             overscroll-behavior-x: none;
@@ -215,6 +215,7 @@
                 Reload
             </button>
         </div>
+        <div class="text-center mb-2"><div data-banner="6067890" ></div></div>
         <div id="match-detail"></div>
         <div id="match-player"></div>
     </section>
@@ -241,25 +242,10 @@
                 tg.expand();
                 this.initBackButton();
                 this.initFullscreen();
-                this.initReload();     
-                this.initAds();
+                this.initReload();
                 this.loadMatch().catch(error => {
                     console.error('Error initializing app:', error);
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
-                });
-
-            },
-
-            initAds() {
-                show_8885856({
-                    type: 'inApp',
-                    inAppSettings: {
-                        frequency: 2,
-                        capping: 0.05,
-                        interval: 30,
-                        timeout: 120,
-                        everyPage: false
-                    }
                 });
             },
 
