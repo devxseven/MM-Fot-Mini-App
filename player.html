@@ -803,7 +803,13 @@
                 let btnUrl = '';
                 const deviceType = this.detectAppleDevice();
                 if (url.includes('http')) {
-                    btnUrl = url;
+                    if (url.includes('pull.niur.live')) {
+                        btnUrl = deviceType
+                            ? url.replace('.m3u8', '.flv')
+                            : url;
+                    } else {
+                        btnUrl = url; // Use the original URL if V HD or V SD is not in the name
+                    }
                 } else if (name.includes('V HD')) {
                     btnUrl = `https://pull.niues.live/live/stream-${url}_lhd.m3u8?auth_key=${this.authKey}`;
                 } else if (name.includes('V SD')) {
