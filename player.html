@@ -403,7 +403,8 @@
                     return;
                 }
 
-                const matches = await this.fetchAndDecryptJson();
+                const cardData = await this.fetchAndDecryptJson();
+                const matches = cardData.context || [];
                 const match = matches.find(m => m.id === matchId);
                 if (!match) {
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Match not found.</p>';
