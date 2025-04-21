@@ -588,7 +588,7 @@
                             offIcon.style.display = art.fullscreenWeb ? 'inline-flex' : 'none';
                             tg.CloudStorage.getItem('fullscreen', function (err, value) {
                                 if (!err && value) {
-                                    if (value === 'yes') {
+                                    if (value === 'no') {
                                         if (art.fullscreenWeb) {
                                             Telegram.WebApp.requestFullscreen();
                                         } else {
@@ -635,7 +635,7 @@
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
                     tg.CloudStorage.getItem('fullscreen', function (err, value) {
                         if (!err && value) {
-                            if (value === 'yes') {
+                            if (value === 'no') {
                                 if (!state) {
                                     Telegram.WebApp.exitFullscreen();
                                 }
