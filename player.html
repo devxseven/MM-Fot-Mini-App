@@ -573,19 +573,6 @@
                         tooltip: 'Fullscreen',
                         index: 100,
                         click: function () {
-                            const onIcon = document.querySelector('.art-icon-fullscreenWebOnCus');
-                            const offIcon = document.querySelector('.art-icon-fullscreenWebOffCus');
-                            if (!onIcon || !offIcon) {
-                                console.error('Fullscreen icons not found in click handler:', this.innerHTML);
-                                return;
-                            }
-                            if (typeof art.fullscreenWeb !== 'boolean') {
-                                console.error('art.fullscreenWeb is not a boolean:', art.fullscreenWeb, 'Type:', typeof art.fullscreenWeb);
-                                return;
-                            }
-                            art.fullscreenWeb = !art.fullscreenWeb;
-                            onIcon.style.display = art.fullscreenWeb ? 'none' : 'inline-flex';
-                            offIcon.style.display = art.fullscreenWeb ? 'inline-flex' : 'none';
                             tg.CloudStorage.getItem('fullscreen', function (err, value) {
                                 if (!err && value) {
                                     if (value === 'no') {
@@ -594,6 +581,19 @@
                                         } else {
                                             Telegram.WebApp.exitFullscreen();
                                         }
+                                        const onIcon = document.querySelector('.art-icon-fullscreenWebOnCus');
+                                        const offIcon = document.querySelector('.art-icon-fullscreenWebOffCus');
+                                        if (!onIcon || !offIcon) {
+                                            console.error('Fullscreen icons not found in click handler:', this.innerHTML);
+                                            return;
+                                        }
+                                        if (typeof art.fullscreenWeb !== 'boolean') {
+                                            console.error('art.fullscreenWeb is not a boolean:', art.fullscreenWeb, 'Type:', typeof art.fullscreenWeb);
+                                            return;
+                                        }
+                                        art.fullscreenWeb = !art.fullscreenWeb;
+                                        onIcon.style.display = art.fullscreenWeb ? 'none' : 'inline-flex';
+                                        offIcon.style.display = art.fullscreenWeb ? 'inline-flex' : 'none';
                                     }
                                 }
                             });
