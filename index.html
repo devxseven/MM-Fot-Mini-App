@@ -103,7 +103,7 @@
                 Reload
             </button>
         </div>
-        <h1 class="text-2xl md:text-3xl font-bold mb-4 hidden">version 8</h1>
+        <h1 class="text-2xl md:text-3xl font-bold mb-4">version 9</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
     </section>
 
@@ -117,7 +117,7 @@
             encryptionKey: "devxseven",
             githubUsername: "devxseven",
             repositoryName: "mmfot-data",
-            githubTokenRead: "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",
+            tokenRead: "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",
             now: moment.tz("Asia/Yangon"),
 
             init() {
@@ -272,7 +272,7 @@
                 try {
                     const response = await fetch(url, {
                         headers: {
-                            "Authorization": `token ${this.githubTokenRead}`,
+                            "Authorization": `token ${this.tokenRead}`,
                             "User-Agent": "GitHub-Admin-Panel"
                         }
                     });

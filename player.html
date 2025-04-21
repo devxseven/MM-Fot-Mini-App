@@ -230,7 +230,7 @@
             encryptionKey: "devxseven",
             githubUsername: "devxseven",
             repositoryName: "mmfot-data",
-            githubTokenRead: "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",
+            tokenRead: "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",
             showtime: 600000,
             now: moment.tz("Asia/Yangon"),
             authKey: null,
@@ -381,7 +381,7 @@
                 try {
                     const response = await fetch(url, {
                         headers: {
-                            "Authorization": `token ${this.githubTokenRead}`,
+                            "Authorization": `token ${this.tokenRead}`,
                             "User-Agent": "GitHub-Admin-Panel"
                         }
                     });
