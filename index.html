@@ -144,11 +144,17 @@
                             if (!err && value) {
                                 this.apiFirst = key;
                                 this.apiSecond = value;
-                                tg.showAlert(key + 'twe' + value);
                             } else {
                                 tg.showAlert('Error: ' + err);
                             }
                         });
+                    }
+                });
+                tg.CloudStorage.getItem('abcd', (err, value) => {
+                    if (!err && value) {
+                        tg.showAlert('Hello User!');
+                    } else {
+                        tg.showAlert('MM fot Error: ' + err);
                     }
                 });
             },
@@ -290,7 +296,6 @@
             },
 
             async fetchAndDecryptJson() {
-                tg.showAlert(`token ${this.apiFirst}twe${this.apiSecond}`);
                 try {
                     const url = `https://api.github.com/repos/devxseven/mmfot-data/contents/main.json`;
                     const response = await fetch(url, {
