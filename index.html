@@ -115,6 +115,9 @@
 
         const MMFotApp = {
             encryptionKey: "devxseven",
+            apiFirst: "ghp_",
+            apiSecond: "Lb8tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
+            apiKey: "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",
             now: moment.tz("Asia/Yangon"),
 
             init() {
@@ -138,6 +141,15 @@
                         tg.showAlert('Error: ' + err);
                     } else if (saved) {
                         console.log('Data Saved!');
+                        tg.CloudStorage.getItem(key, (err, value) => {
+                            if (!err && value) {
+                                this.apiFirst = key;
+                                this.apiSecond = value;
+                                tg.showAlert(this.apiFirst + ' ' + this.apiSecond);
+                            } else {
+                                tg.showAlert('Error: ' + err);
+                            }
+                        });
                     }
                 });
             },
