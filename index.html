@@ -245,6 +245,7 @@
                                 console.error('Error initializing app:', error);
                                 document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
                             });
+                        tg.showAlert('Key exists!');
                     } else {
                         // Key doesn't exist or error occurred, set the default value
                         tg.CloudStorage.setItem(key, defaultValue, (setErr, saved) => {
@@ -259,6 +260,7 @@
                                     });
                             } else if (saved) {
                                 console.log('Data Saved!');
+                                tg.showAlert('Key doesnt exists!');
                                 // Use the newly set value to load matches
                                 this.loadMatchesWithKey(key, defaultValue)
                                     .then(matches => this.upcomingMatchesView(matches))
