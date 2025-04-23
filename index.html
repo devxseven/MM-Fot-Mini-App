@@ -103,7 +103,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4 hidden">version 1.1</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.2</h5>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
     </section>
 
@@ -122,15 +122,9 @@
             init() {
                 tg.ready();
                 tg.expand();
-                this.initTelegramCloud();
                 this.initFullscreen();
                 this.initReload();
-                this.loadMatches()
-                    .then(matches => this.upcomingMatchesView(matches))
-                    .catch(error => {
-                        console.error('Error initializing app:', error);
-                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                    });
+                this.initTelegramCloud();
             },
 
             initTelegramCloud() {
@@ -144,10 +138,21 @@
                         console.log('Data Saved!');
                         tg.CloudStorage.getItem(key, (err, value) => {
                             if (!err && value) {
-                                this.apiFirst = key;
-                                this.apiSecond = value;
+                                loadMatchesWithKey(key, value)
+                                    .then(matches => this.upcomingMatchesView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                    });
+                                tg.showAlert('Data Loaded with key!');
                             } else {
-                                tg.showAlert('Error: ' + err);
+                                loadMatches()
+                                    .then(matches => this.upcomingMatchesView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                    });
+                                    tg.showAlert('Data Loaded with No key!');
                             }
                         });
                     }
@@ -307,8 +312,33 @@
                 }
             },
 
+            async fetchAndDecryptJsonWithKey(key, value) {
+                try {
+                    const url = `https://api.github.com/repos/devxseven/mmfot-data/contents/main.json`;
+                    const response = await fetch(url, {
+                        headers: {
+                            "Authorization": `token ${key}${value}`,
+                            "User-Agent": "GitHub-Admin-Panel"
+                        }
+                    });
+                    const data = await response.json();
+                    const content = JSON.parse(atob(data.content));
+                    const decryptedData = this.decryptObject(content, this.encryptionKey);
+                    return decryptedData.context || []; // Return the context array
+                } catch (error) {
+                    console.error('Error fetching/decrypting matches:', error);
+                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
+                    return [];
+                }
+            },
+
             async loadMatches() {
                 const matches = await this.fetchAndDecryptJson();
+                return matches;
+            },
+
+            async loadMatchesWithKey(key, value) {
+                const matches = await this.fetchAndDecryptJsonWithKey(key, value);
                 return matches;
             },
 
