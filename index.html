@@ -144,7 +144,6 @@
                                         console.error('Error initializing app:', error);
                                         document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
                                     });
-                                tg.showAlert('Data Loaded with key!');
                             } else {
                                 this.loadMatches()
                                     .then(matches => this.upcomingMatchesView(matches))
@@ -152,7 +151,6 @@
                                         console.error('Error initializing app:', error);
                                         document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
                                     });
-                                    tg.showAlert('Data Loaded with No key!');
                             }
                         });
                     }
