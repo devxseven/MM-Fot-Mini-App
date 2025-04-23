@@ -241,10 +241,12 @@
                 this.initBackButton();
                 this.initFullscreen();
                 this.initReload();
-                this.loadMatch().catch(error => {
-                    console.error('Error initializing app:', error);
-                    document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
-                });
+                this.loadMatches()
+                    .then(matches => this.matchDetailView(matches))
+                    .catch(error => {
+                        console.error('Error initializing app:', error);
+                        document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
+                    });
             },
 
             initBackButton() {
@@ -390,15 +392,18 @@
                 }
             },
 
-            async loadMatch() {
+            async loadMatches() {
+                const matches = await this.fetchAndDecryptJson();
+                return matches;
+            },
+
+            matchDetailView(matches) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const matchId = urlParams.get('id');
                 if (!matchId) {
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">No match ID provided.</p>';
                     return;
                 }
-
-                const matches = await this.fetchAndDecryptJson();
                 const match = matches.find(m => m.id === matchId);
                 if (!match) {
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Match not found.</p>';

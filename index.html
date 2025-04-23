@@ -103,7 +103,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4 hidden">version 1.2</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.2</h5>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
     </section>
 
@@ -125,36 +125,6 @@
                 this.initFullscreen();
                 this.initReload();
                 this.initTelegramCloud();
-            },
-
-            initTelegramCloud() {
-                const key = 'ghp_';
-                const value = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
-
-                tg.CloudStorage.setItem(key, value, (err, saved) => {
-                    if (err) {
-                        tg.showAlert('Error: ' + err);
-                    } else if (saved) {
-                        console.log('Data Saved!');
-                        tg.CloudStorage.getItem(key, (err, value) => {
-                            if (!err && value) {
-                                this.loadMatchesWithKey(key, value)
-                                    .then(matches => this.upcomingMatchesView(matches))
-                                    .catch(error => {
-                                        console.error('Error initializing app:', error);
-                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                    });
-                            } else {
-                                this.loadMatches()
-                                    .then(matches => this.upcomingMatchesView(matches))
-                                    .catch(error => {
-                                        console.error('Error initializing app:', error);
-                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                    });
-                            }
-                        });
-                    }
-                });
             },
 
             // initBackButton() {
@@ -259,6 +229,47 @@
 
             reloadApp() {
                 window.location.reload();
+            },
+
+            initTelegramCloud() {
+                const key = 'ghp_';
+                const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
+
+                // Check if the key exists in CloudStorage
+                tg.CloudStorage.getItem(key, (err, value) => {
+                    if (!err && value) {
+                        // Key exists, use the value to load matches
+                        this.loadMatchesWithKey(key, value)
+                            .then(matches => this.upcomingMatchesView(matches))
+                            .catch(error => {
+                                console.error('Error initializing app:', error);
+                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                            });
+                    } else {
+                        // Key doesn't exist or error occurred, set the default value
+                        tg.CloudStorage.setItem(key, defaultValue, (setErr, saved) => {
+                            if (setErr) {
+                                tg.showAlert('Error saving to CloudStorage: ' + setErr);
+                                // Fallback to loadMatches without key
+                                this.loadMatches()
+                                    .then(matches => this.upcomingMatchesView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                    });
+                            } else if (saved) {
+                                console.log('Data Saved!');
+                                // Use the newly set value to load matches
+                                this.loadMatchesWithKey(key, defaultValue)
+                                    .then(matches => this.upcomingMatchesView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                    });
+                            }
+                        });
+                    }
+                });
             },
 
             decryptString(encryptedBase64, key) {
