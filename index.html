@@ -125,10 +125,12 @@
                 this.initTelegramCloud();
                 this.initFullscreen();
                 this.initReload();
-                this.loadMatches().catch(error => {
-                    console.error('Error initializing app:', error);
-                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                });
+                this.loadMatches()
+                    .then(matches => this.upcomingMatchesView(matches))
+                    .catch(error => {
+                        console.error('Error initializing app:', error);
+                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                    });
             },
 
             initTelegramCloud() {
@@ -148,13 +150,6 @@
                                 tg.showAlert('Error: ' + err);
                             }
                         });
-                    }
-                });
-                tg.CloudStorage.getItem('abcd', (err, value) => {
-                    if (!err && value) {
-                        tg.showAlert('Hello User!');
-                    } else {
-                        tg.showAlert('MM fot Error: ' + err);
                     }
                 });
             },
@@ -297,16 +292,13 @@
 
             async fetchAndDecryptJson() {
                 try {
-                    const url = `https://api.github.com/repos/devxseven/mmfot-data/contents/main.json`;
-                    const response = await fetch(url, {
-                        headers: {
-                            "Authorization": `token ${this.apiFirst}${this.apiSecond}`,
-                            "User-Agent": "GitHub-Admin-Panel"
-                        }
-                    });
-                    const data = await response.json();
-                    const content = JSON.parse(atob(data.content));
-                    const decryptedData = this.decryptObject(content, this.encryptionKey);
+                    const response = await fetch("https://raw.githubusercontent.com/devxseven/mmfot-data/refs/heads/main/main.json");
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const encryptedData = await response.json();
+                    // Decrypt the data
+                    const decryptedData = this.decryptObject(encryptedData, this.encryptionKey);
                     return decryptedData.context || []; // Return the context array
                 } catch (error) {
                     console.error('Error fetching/decrypting matches:', error);
@@ -316,9 +308,12 @@
             },
 
             async loadMatches() {
-                const matchList = document.getElementById('matchList');
                 const matches = await this.fetchAndDecryptJson();
+                return matches;
+            },
 
+            upcomingMatchesView(matches) {
+                const matchList = document.getElementById('matchList');
                 const upcomingMatches = matches.filter(match => {
                     if (!match.date || !match.time) return false;
                     const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
