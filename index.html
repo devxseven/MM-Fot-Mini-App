@@ -137,14 +137,7 @@
                     if (err) {
                         tg.showAlert('Error: ' + err);
                     } else if (saved) {
-                        console.log('Test Hello World:', value);
-                        tg.CloudStorage.getItem(key, (err, value) => {
-                            if (!err && value) {
-                                tg.showAlert(key + value);
-                            } else {
-                                tg.showAlert('Welcome to MMFot!');
-                            }
-                        });
+                        console.log('Data Saved!');
                     }
                 });
             },
