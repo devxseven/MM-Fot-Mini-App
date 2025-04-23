@@ -241,10 +241,7 @@
                 this.initBackButton();
                 this.initFullscreen();
                 this.initReload();
-                this.loadMatch().catch(error => {
-                    console.error('Error initializing app:', error);
-                    document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
-                });
+                this.initTelegramCloud();
             },
 
             initBackButton() {
@@ -342,6 +339,47 @@
                 window.location.reload();
             },
 
+            initTelegramCloud() {
+                const key = 'ghp_';
+                const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
+
+                // Check if the key exists in CloudStorage
+                tg.CloudStorage.getItem(key, (err, value) => {
+                    if (!err && value) {
+                        // Key exists, use the value to load matches
+                        this.loadMatchesWithKey(key, value)
+                            .then(matches => this.matchDetailView(matches))
+                            .catch(error => {
+                                console.error('Error initializing app:', error);
+                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                            });
+                    } else {
+                        // Key doesn't exist or error occurred, set the default value
+                        tg.CloudStorage.setItem(key, defaultValue, (setErr, saved) => {
+                            if (setErr) {
+                                console.error('Error saving to CloudStorage:', setErr);
+                                // Fallback to loadMatches without key
+                                this.loadMatches()
+                                    .then(matches => this.matchDetailView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
+                                    });
+                            } else if (saved) {
+                                console.log('Data Saved!');
+                                // Use the newly set value to load matches
+                                this.loadMatchesWithKey(key, defaultValue)
+                                    .then(matches => this.matchDetailView(matches))
+                                    .catch(error => {
+                                        console.error('Error initializing app:', error);
+                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                    });
+                            }
+                        });
+                    }
+                });
+            },
+
             decryptString(encryptedBase64, key) {
                 if (!encryptedBase64 || typeof encryptedBase64 !== 'string') return '';
                 if (!key) return encryptedBase64;
@@ -390,15 +428,43 @@
                 }
             },
 
-            async loadMatch() {
+            async fetchAndDecryptJsonWithKey(key, value) {
+                try {
+                    const url = `https://api.github.com/repos/devxseven/mmfot-data/contents/main.json`;
+                    const response = await fetch(url, {
+                        headers: {
+                            "Authorization": `token ${key}${value}`,
+                            "User-Agent": "GitHub-Admin-Panel"
+                        }
+                    });
+                    const data = await response.json();
+                    const content = JSON.parse(atob(data.content));
+                    const decryptedData = this.decryptObject(content, this.encryptionKey);
+                    return decryptedData.context || []; // Filter matches by key and value
+                } catch (error) {
+                    console.error('Error fetching/decrypting matches with key:', error);
+                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
+                    return [];
+                }
+            },
+
+            async loadMatches() {
+                const matches = await this.fetchAndDecryptJson();
+                return matches;
+            },
+
+            async loadMatchesWithKey(key, value) {
+                const matches = await this.fetchAndDecryptJsonWithKey(key, value);
+                return matches;
+            },
+
+            matchDetailView(matches) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const matchId = urlParams.get('id');
                 if (!matchId) {
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">No match ID provided.</p>';
                     return;
                 }
-
-                const matches = await this.fetchAndDecryptJson();
                 const match = matches.find(m => m.id === matchId);
                 if (!match) {
                     document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Match not found.</p>';

@@ -249,7 +249,7 @@
                         // Key doesn't exist or error occurred, set the default value
                         tg.CloudStorage.setItem(key, defaultValue, (setErr, saved) => {
                             if (setErr) {
-                                tg.showAlert('Error saving to CloudStorage: ' + setErr);
+                                console.error('Error saving to CloudStorage:', setErr);
                                 // Fallback to loadMatches without key
                                 this.loadMatches()
                                     .then(matches => this.upcomingMatchesView(matches))
