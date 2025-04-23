@@ -103,7 +103,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.2</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4 hidden">version 1.2</h5>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
     </section>
 
@@ -138,7 +138,7 @@
                         console.log('Data Saved!');
                         tg.CloudStorage.getItem(key, (err, value) => {
                             if (!err && value) {
-                                loadMatchesWithKey(key, value)
+                                this.loadMatchesWithKey(key, value)
                                     .then(matches => this.upcomingMatchesView(matches))
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
@@ -146,7 +146,7 @@
                                     });
                                 tg.showAlert('Data Loaded with key!');
                             } else {
-                                loadMatches()
+                                this.loadMatches()
                                     .then(matches => this.upcomingMatchesView(matches))
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
