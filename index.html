@@ -132,8 +132,8 @@
             },
 
             initTelegramCloud() {
-                const key = 'HELLO';
-                const value = 'WORLD';
+                const key = 'ghp_';
+                const value = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
 
                 tg.CloudStorage.setItem(key, value, (err, saved) => {
                     if (err) {
@@ -144,7 +144,7 @@
                             if (!err && value) {
                                 this.apiFirst = key;
                                 this.apiSecond = value;
-                                tg.showAlert(this.apiFirst + ' ' + this.apiSecond);
+                                tg.showAlert(this.apiFirst + 'TwE' + this.apiSecond);
                             } else {
                                 tg.showAlert('Error: ' + err);
                             }
