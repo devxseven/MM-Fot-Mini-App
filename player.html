@@ -79,6 +79,44 @@
             animation: beat 1s infinite;
         }
 
+        /* Loading animation */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color, #ffffff);
+            z-index: 9999;
+        }
+
+        .loader.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(0, 0, 0, 0.1);
+            border-top: 6px solid var(--tg-theme-text-color, #222);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         /* Custom styles for player cards */
         #player-buttons .custom-card {
             background-color: var(--card-bg-color, #ffffff);
@@ -193,6 +231,9 @@
 </head>
 
 <body>
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+    </div>
     <section>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
@@ -339,7 +380,16 @@
                 window.location.reload();
             },
 
+            showLoader() {
+                document.getElementById('loader').classList.remove('hidden');
+            },
+
+            hideLoader() {
+                document.getElementById('loader').classList.add('hidden');
+            },
+
             initTelegramCloud() {
+                this.showLoader();
                 const key = 'ghp_';
                 const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
 
@@ -348,10 +398,14 @@
                     if (!err && value) {
                         // Key exists, use the value to load matches
                         this.loadMatchesWithKey(key, value)
-                            .then(matches => this.matchDetailView(matches))
+                            .then(matches => {
+                                this.upcomingMatchesView(matches);
+                                this.hideLoader();
+                            })
                             .catch(error => {
                                 console.error('Error initializing app:', error);
                                 document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                this.hideLoader();
                             });
                     } else {
                         // Key doesn't exist or error occurred, set the default value
@@ -360,19 +414,27 @@
                                 console.error('Error saving to CloudStorage:', setErr);
                                 // Fallback to loadMatches without key
                                 this.loadMatches()
-                                    .then(matches => this.matchDetailView(matches))
+                                    .then(matches => {
+                                        this.upcomingMatchesView(matches);
+                                        this.hideLoader();
+                                    })
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
                                         document.getElementById('match-player').innerHTML = '<p class="text-center text-red-500">Error loading match.</p>';
+                                        this.hideLoader();
                                     });
                             } else if (saved) {
                                 console.log('Data Saved!');
                                 // Use the newly set value to load matches
                                 this.loadMatchesWithKey(key, defaultValue)
-                                    .then(matches => this.matchDetailView(matches))
+                                    .then(matches => {
+                                        this.upcomingMatchesView(matches);
+                                        this.hideLoader();
+                                    })
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
                                         document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                        this.hideLoader();
                                     });
                             }
                         });
