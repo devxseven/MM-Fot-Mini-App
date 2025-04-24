@@ -65,6 +65,24 @@
             animation: beat 1s infinite;
         }
 
+        /* Loading animation */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 9999;
+        }
+
+        .loader.hidden {
+            display: none;
+        }
+
         /* p tag Custom text styles */
         .league,
         .home-name,
@@ -78,45 +96,12 @@
             background-color: var(--card-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #222);
         }
-
-        /* Loading spinner styles */
-        .loading-spinner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            z-index: 1000;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--tg-theme-text-color, #222);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 
 <body>
-    <div id="loadingSpinner" class="loading-spinner">
-        <div class="spinner"></div>
+    <div id="loader" class="loader">
+        <span class="loading loading-spinner loading-lg text-info"></span>
     </div>
     <section>
         <div class="flex gap-3 justify-center">
@@ -267,12 +252,18 @@
                 window.location.reload();
             },
 
+            showLoader() {
+                document.getElementById('loader').classList.remove('hidden');
+            },
+
+            hideLoader() {
+                document.getElementById('loader').classList.add('hidden');
+            },
+
             initTelegramCloud() {
+                this.showLoader();
                 const key = 'ghp_';
                 const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
-
-                // Show loading spinner
-                document.getElementById('loadingSpinner').classList.remove('hidden');
 
                 // Check if the key exists in CloudStorage
                 tg.CloudStorage.getItem(key, (err, value) => {
@@ -281,14 +272,12 @@
                         this.loadMatchesWithKey(key, value)
                             .then(matches => {
                                 this.upcomingMatchesView(matches);
-                                // Hide loading spinner after data is loaded
-                                document.getElementById('loadingSpinner').classList.add('hidden');
+                                this.hideLoader();
                             })
                             .catch(error => {
                                 console.error('Error initializing app:', error);
                                 document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                // Hide loading spinner on error
-                                document.getElementById('loadingSpinner').classList.add('hidden');
+                                this.hideLoader();
                             });
                     } else {
                         // Key doesn't exist or error occurred, set the default value
@@ -299,29 +288,25 @@
                                 this.loadMatches()
                                     .then(matches => {
                                         this.upcomingMatchesView(matches);
-                                        // Hide loading spinner after data is loaded
-                                        document.getElementById('loadingSpinner').classList.add('hidden');
+                                        this.hideLoader();
                                     })
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
                                         document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                        // Hide loading spinner on error
-                                        document.getElementById('loadingSpinner').classList.add('hidden');
+                                        this.hideLoader();
                                     });
                             } else if (saved) {
                                 console.log('Data Saved!');
                                 // Use the newly set value to load matches
                                 this.loadMatchesWithKey(key, defaultValue)
-                                .then(matches => {
+                                    .then(matches => {
                                         this.upcomingMatchesView(matches);
-                                        // Hide loading spinner after data is loaded
-                                        document.getElementById('loadingSpinner').classList.add('hidden');
+                                        this.hideLoader();
                                     })
                                     .catch(error => {
                                         console.error('Error initializing app:', error);
                                         document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                        // Hide loading spinner on error
-                                        document.getElementById('loadingSpinner').classList.add('hidden');
+                                        this.hideLoader();
                                     });
                             }
                         });
