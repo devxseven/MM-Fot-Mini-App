@@ -667,7 +667,6 @@
                     autoplay: true,
                     isLive: true,
                     fullscreenWeb: true,
-                    fullscreen: true,
                     autoOrientation: true,
                     layers: [{
                         html: '<span style="color:yellow; font-weight: 700; font-size: smaller;">mmfot.com</span>',
@@ -727,7 +726,6 @@
                                         console.error('art.fullscreenWeb is not a boolean:', art.fullscreenWeb, 'Type:', typeof art.fullscreenWeb);
                                         return;
                                     }
-                                    art.fullscreenWeb = !art.fullscreenWeb;
                                 }
                             } catch (err) {
                                 console.error('Error accessing fullscreen setting:', err);
