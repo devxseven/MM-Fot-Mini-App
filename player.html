@@ -710,12 +710,15 @@
                                     });
                                 });
                             };
+                            // Helper function for 1-second delay
+                            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
                             try {
                                 const value = await getFullscreenSetting();
                                 if (value === 'no') {
-                                    if (!art.fullscreenWeb) {
+                                    if (art.fullscreenWeb) {
                                         await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
+                                        await delay(1000); // 1-second delay
                                         art.fullscreenWeb = !art.fullscreenWeb;
                                     } else {
                                         Telegram.WebApp.exitFullscreen(); // Assumes exitFullscreen is synchronous
