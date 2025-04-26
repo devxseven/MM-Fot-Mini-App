@@ -667,7 +667,6 @@
                     autoplay: true,
                     isLive: true,
                     fullscreenWeb: true,
-                    fullscreen: true,
                     autoOrientation: true,
                     layers: [{
                         html: '<span style="color:yellow; font-weight: 700; font-size: smaller;">mmfot.com</span>',
@@ -713,26 +712,14 @@
                             };
                             // Helper function for 1-second delay
                             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-                            // Helper function to wrap Telegram.WebApp.requestFullscreen in a Promise
-                            const requestFullscreen = () => {
-                                return new Promise((resolve, reject) => {
-                                    Telegram.WebApp.requestFullscreen((err) => {
-                                        if (err) reject(err);
-                                        else resolve();
-                                    });
-                                });
-                            };
 
                             try {
                                 const value = await getFullscreenSetting();
                                 if (value === 'no') {
                                     if (!art.fullscreenWeb) {
-                                        requestFullscreen().then(() => {
-                                            // After fullscreen request resolves, wait 1 second and toggle state
-                                            art.fullscreenWeb = !art.fullscreenWeb;
-                                        }).catch(err => {
-                                            console.error('Error requesting fullscreen:', err);
-                                        });
+                                        await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
+                                        await delay(1000); // 1-second delay
+                                        art.fullscreenWeb = !art.fullscreenWeb;
                                     } else {
                                         Telegram.WebApp.exitFullscreen(); // Assumes exitFullscreen is synchronous
                                         art.fullscreenWeb = !art.fullscreenWeb;
