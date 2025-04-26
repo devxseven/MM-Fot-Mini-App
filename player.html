@@ -714,18 +714,15 @@
                             try {
                                 const value = await getFullscreenSetting();
                                 if (value === 'no') {
-                                    console.log('value shine: no');
                                     if (!art.fullscreenWeb) {
-                                        console.log('requestFullscreen shine', art.fullscreenWeb);
                                         await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
+                                        art.fullscreenWeb = !art.fullscreenWeb;
                                     } else {
-                                        console.log('exitFullscreen shine', art.fullscreenWeb);
                                         Telegram.WebApp.exitFullscreen(); // Assumes exitFullscreen is synchronous
+                                        art.fullscreenWeb = !art.fullscreenWeb;
                                     }
-                                    if (typeof art.fullscreenWeb !== 'boolean') {
-                                        console.error('art.fullscreenWeb is not a boolean:', art.fullscreenWeb, 'Type:', typeof art.fullscreenWeb);
-                                        return;
-                                    }
+                                } else {
+                                    art.fullscreenWeb = !art.fullscreenWeb;
                                 }
                             } catch (err) {
                                 console.error('Error accessing fullscreen setting:', err);
