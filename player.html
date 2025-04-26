@@ -715,9 +715,12 @@
                             try {
                                 const value = await getFullscreenSetting();
                                 if (value === 'no') {
+                                    console.log('value shine: no');
                                     if (art.fullscreenWeb) {
+                                        console.log('requestFullscreen shine', art.fullscreenWeb);
                                         await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
                                     } else {
+                                        console.log('exitFullscreen shine', art.fullscreenWeb);
                                         Telegram.WebApp.exitFullscreen(); // Assumes exitFullscreen is synchronous
                                     }
                                     if (typeof art.fullscreenWeb !== 'boolean') {
