@@ -150,7 +150,7 @@
             <div class="spinner"></div>
         </div>
         <h2 class="text-xl font-bold my-4">All Games</h2>
-        <div class="grid grid-cols-3 md:grid-cols-6 xl:grid-cols-8 gap-4" id="gameList"></div>
+        <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4" id="gameList"></div>
     </section>
 
     <script>
@@ -479,16 +479,13 @@
         };
 
         async function fetchGames() {
-            console.log('shine Fetching games from games.json');
             try {
                 const response = await fetch('games.json');
                 console.log('shine Fetch response:', response);
                 if (!response.ok) throw new Error(`shine Network response was not ok: ${response.status}`);
                 const data = await response.json();
-                console.log('shine Games data:', data);
                 return data || [];
             } catch (error) {
-                console.error('shine Error fetching games:', error);
                 document.getElementById('gameList').innerHTML = '<p class="text-center text-red-500">Error loading games: ' + error.message + '</p>';
                 return [];
             }
@@ -501,21 +498,17 @@
 
             if (games.length === 0) {
                 gameList.innerHTML = '<p class="text-center text-gray-600">No games found.</p>';
-                console.log('shine No games to display');
                 return;
             }
 
             games.forEach(game => {
-                console.log('shine Adding game card:', game.title);
                 const card = document.createElement('div');
                 card.className = 'card shadow-xl game-card cursor-pointer';
                 card.innerHTML = `
-                <img src="${game.thumb2}" alt="${game.name}" class="rounded-lg">
-                <p class="text-sm font-semibold mt-2">${game.name}</p>
+                <img src="${game.image}" class="rounded-lg">
             `;
                 card.addEventListener('click', () => {
-                    console.log('shine Navigating to game:', game.url);
-                    window.location.href = `game.html?url=${encodeURIComponent(game.url)}`;
+                    window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                 });
                 gameList.appendChild(card);
             });
