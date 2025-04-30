@@ -55,12 +55,7 @@
             initBackButton() {
                 tg.BackButton.show();
                 tg.BackButton.onClick(() => {
-                    if (this.isWebFullscreen) {
-                        // Ensure state is reset to non-fullscreen and non-rotated
-                        this.toggleRotation();
-                    } else {
-                        window.history.back();
-                    }
+                    window.history.back();
                 });
             },
 
