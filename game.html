@@ -28,9 +28,11 @@
     <iframe id="gameFrame" src=""> </iframe>
   
     <script>
+
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+        tg.BackButton.hide();
 
         const urlParams = new URLSearchParams(window.location.search);
         const gameUrl = urlParams.get('url');
@@ -39,6 +41,44 @@
         } else {
             document.body.innerHTML = '<p class="text-center text-red-500">No game URL provided.</p>';
         }
+
+        const MMFotApp = {
+
+            init() {
+                this.authKey = this.generateAuthKey();
+                tg.ready();
+                tg.expand();
+                this.initBackButton();
+                this.initFullscreen();
+            },
+
+            initBackButton() {
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    if (this.isWebFullscreen) {
+                        // Ensure state is reset to non-fullscreen and non-rotated
+                        this.toggleRotation();
+                    } else {
+                        window.history.back();
+                    }
+                });
+            },
+
+            initFullscreen() {
+                tg.CloudStorage.getItem('fullscreen', function (err, value) {
+                    if (!err && value) {
+                        if (value === 'yes') {
+                            Telegram.WebApp.requestFullscreen();
+                        } else {
+                            Telegram.WebApp.exitFullscreen();
+                        }
+                    }
+                });
+            }
+
+        };
+
+        MMFotApp.init();
     </script>
 </body>
 </html>
