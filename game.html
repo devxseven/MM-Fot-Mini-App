@@ -32,7 +32,7 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        tg.BackButton.hide();
+        tg.BackButton.show();
 
         const urlParams = new URLSearchParams(window.location.search);
         const gameUrl = urlParams.get('url');
