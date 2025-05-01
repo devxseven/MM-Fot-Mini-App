@@ -119,10 +119,44 @@
             object-fit: cover;
             border-radius: 8px;
         }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 
 <body>
+    <div class="loading-overlay" id="adLoadingOverlay">
+        <div class="spinner"></div>
+    </div>
     <section>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
@@ -144,7 +178,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.0</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.1</h5>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
@@ -469,15 +503,17 @@
                             //     console.error('Error showing ad:', error);
                             //     window.location.href = `player.html?id=${match.id}`;
                             // });
-
+                            document.getElementById('adLoadingOverlay').classList.add('active');
                             window.Sonar.show({
                                 adUnit: 'interstitial', // ad unit name from admin
+                                loader: false,
                                 onClose: () => {
+                                    document.getElementById('adLoadingOverlay').classList.remove('active');
                                     window.location.href = `player.html?id=${match.id}`;
                                 },
                             }).then((showResult) => {
                                 if (showResult?.status === 'error') {
-                                    alert('Interstitial ads didn\'t filled');
+                                    document.getElementById('adLoadingOverlay').classList.remove('active');
                                     window.location.href = `player.html?id=${match.id}`;
                                 }
                             });
@@ -520,18 +556,21 @@
                 <img src="${game.image}" class="rounded-lg">
             `;
                 card.addEventListener('click', () => {
+                    document.getElementById('adLoadingOverlay').classList.add('active');
                     window.Sonar.show({
                         adUnit: 'rewarded', // ad unit name from admin
+                        loader: false,
                         onReward: () => {
+                            document.getElementById('adLoadingOverlay').classList.remove('active');
                             window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                         },
                     }).then((showResult) => {
                         if (showResult?.status === 'error') {
-                            alert('Rewarded ads didn\'t filled');
+                            document.getElementById('adLoadingOverlay').classList.remove('active');
                             window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                         }
                     });
-                    
+
                 });
                 gameList.appendChild(card);
             });
