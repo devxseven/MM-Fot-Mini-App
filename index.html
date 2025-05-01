@@ -178,7 +178,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.1</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.2</h5>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
@@ -229,25 +229,6 @@
                         this.updateFullscreenButton(fullscreenBtn);
                     } else {
                         tg.showAlert('Fullscreen failed: ' + params.error);
-                    }
-                });
-
-                // Load the fullscreen state from cloud storage
-                tg.CloudStorage.getItem('fullscreen', (err, value) => {
-                    if (!err && value) {
-                        if (value === 'yes' && !tg.isFullscreen) {
-                            Telegram.WebApp.requestFullscreen(); // Only request if not already in fullscreen
-                        } else if (value === 'no' && tg.isFullscreen) {
-                            Telegram.WebApp.exitFullscreen(); // Only exit if already in fullscreen
-                        }
-                        this.updateFullscreenButton(fullscreenBtn);
-                    } else {
-                        // Set default to 'no' if no state exists
-                        tg.CloudStorage.setItem('fullscreen', 'no', (setErr, saved) => {
-                            if (!setErr && saved) {
-                                this.updateFullscreenButton(fullscreenBtn);
-                            }
-                        });
                     }
                 });
             },
