@@ -178,7 +178,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.1</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.2</h5>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
@@ -203,6 +203,7 @@
             init() {
                 tg.ready();
                 tg.expand();
+                this.initFullscreen();
                 this.initReload();
                 this.initTelegramCloud();
             },
