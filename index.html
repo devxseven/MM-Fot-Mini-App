@@ -11,7 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
-    <script src='//whephiwums.com/sdk.js' data-zone='9233664' data-sdk='show_9233664'></script>
     <script src="https://static.sonartech.io/lib/1.0.0/sonar.js?appId=app_30923440&isDebug=true"></script>
     <style>
         html {
@@ -44,12 +43,10 @@
             padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
         }
 
-        /* Card styles */
         .card {
             background-color: var(--card-bg-color, #ffffff);
         }
 
-        /* Animation beat */
         @keyframes beat {
 
             0%,
@@ -66,7 +63,6 @@
             animation: beat 1s infinite;
         }
 
-        /* Loading animation */
         .loader {
             display: flex;
             justify-content: center;
@@ -99,7 +95,6 @@
             }
         }
 
-        /* p tag Custom text styles */
         .league,
         .home-name,
         .away-name,
@@ -113,14 +108,29 @@
             color: var(--tg-theme-text-color, #222);
         }
 
+        .button:hover {
+            background-color: #e7e7e7;
+        }
+
         .game-card img {
             width: 100%;
-            height: 150px;
+            height: 125px;
             object-fit: cover;
             border-radius: 8px;
         }
 
-        /* Loading overlay */
+        #bnmmfot {
+            margin-top: 16px;
+            width: 100%;
+            height: 70px;
+        }
+
+        #bn2mmfot {
+            margin-bottom: 16px;
+            width: 100%;
+            height: 70px;
+        }
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -154,9 +164,6 @@
 </head>
 
 <body>
-    <div class="loading-overlay" id="adLoadingOverlay">
-        <div class="spinner"></div>
-    </div>
     <section>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
@@ -178,21 +185,49 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.2</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.2 beta</h5>
+        <div id="bn2mmfot"></div>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
             <div class="spinner"></div>
         </div>
-        <h2 class="text-xl font-bold my-4">Football Games</h2>
+        <div id="bnmmfot"></div>
+        <h2 class="text-xl font-bold my-4">Sports Games</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4" id="gameList"></div>
     </section>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.BackButton.hide();
+        window.Sonar.show({ adUnit: "bn2mmfot" }).then((showResult) => {
+            if (showResult?.status === 'error') {
+                console.error('Ad bn2mmfot failed to show');
+                document.getElementById('bn2mmfot').style.display = 'none';
+            } else {
+                console.log('Ad bn2mmfot is showing');
+            }
+        }).catch((error) => {
+            console.error('Error with bn2mmfot ad:', error);
+            document.getElementById('bn2mmfot').style.display = 'none';
+        });
+        window.Sonar.show({ adUnit: "bnmmfot" }).then((showResult) => {
+            if (showResult?.status === 'error') {
+                console.error('Ad bnmmfot failed to show');
+                document.getElementById('bnmmfot').style.display = 'none';
+            } else {
+                console.log('Ad bnmmfot is showing');
+            }
+        }).catch((error) => {
+            console.error('Error with bnmmfot ad:', error);
+            document.getElementById('bnmmfot').style.display = 'none';
+        });
+    </script>
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.BackButton.hide();
+        }
 
         const MMFotApp = {
             encryptionKey: "devxseven",
@@ -201,25 +236,18 @@
             now: moment.tz("Asia/Yangon"),
 
             init() {
-                tg.ready();
-                tg.expand();
-                this.initFullscreen();
+                if (tg) {
+                    tg.ready();
+                    tg.expand();
+                    this.initFullscreen();
+                }
                 this.initReload();
-                this.initTelegramCloud();
+                this.initLocalStorage();
+                this.fetchGames().then(games => this.displayGames(games));
             },
 
-            // initBackButton() {
-            //     tg.BackButton.show();
-            //     tg.BackButton.onClick(() => {
-            //         tg.showConfirm('Do you want to exit the app?', (confirmed) => {
-            //             if (confirmed) {
-            //                 tg.close(); // Close the app if "OK" is clicked
-            //             }
-            //             // If "Cancel" is clicked, do nothing
-            //         });
-            //     });
-            // },
             initFullscreen() {
+                if (!tg) return;
                 const fullscreenBtn = document.getElementById('fullscreen_btn');
                 fullscreenBtn.addEventListener('click', () => this.toggleFullscreen(fullscreenBtn));
 
@@ -231,75 +259,33 @@
                         tg.showAlert('Fullscreen failed: ' + params.error);
                     }
                 });
-
-                // Load the fullscreen state from cloud storage
-                tg.CloudStorage.getItem('fullscreen', function (err, value) {
-                    if (!err && value) {
-                        if (value === 'yes') {
-                            Telegram.WebApp.requestFullscreen();
-                            fullscreenBtn.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                                fill="var(--tg-theme-text-color, #222)">
-                                <path 
-                                    d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
-                            </svg>
-                            Exit Fullscreen`;
-                        } else {
-                            Telegram.WebApp.exitFullscreen();
-                            fullscreenBtn.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                                fill="var(--tg-theme-text-color, #222)">
-                                <path
-                                    d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
-                            </svg>
-                            Change Fullscreen`;
-                        }
-                    }
-                });
-
-                this.updateFullscreenButton(fullscreenBtn);
             },
 
             toggleFullscreen(el) {
                 if (tg.isFullscreen) {
                     tg.exitFullscreen();
-                    this.saveFullscreenState('no');
                 } else {
                     tg.requestFullscreen();
-                    this.saveFullscreenState('yes');
                 }
-            },
-
-            saveFullscreenState(state) {
-                const key = 'fullscreen';
-                const value = state;
-
-                tg.CloudStorage.setItem(key, value, (err, saved) => {
-                    if (err) {
-                        tg.showAlert('Error: ' + err);
-                    } else if (saved) {
-                        console.log('Fullscreen state saved:', value);
-                    }
-                });
             },
 
             updateFullscreenButton(el) {
                 if (tg.isFullscreen) {
                     el.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                                fill="var(--tg-theme-text-color, #222)">
-                                <path 
-                                    d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
-                            </svg>
-                            Exit Fullscreen`;
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                            fill="var(--tg-theme-text-color, #222)">
+                            <path 
+                                d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
+                        </svg>
+                        Exit Fullscreen`;
                 } else {
                     el.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                                fill="var(--tg-theme-text-color, #222)">
-                                <path
-                                    d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
-                            </svg>
-                            Change Fullscreen`;
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
+                            fill="var(--tg-theme-text-color, #222)">
+                            <path
+                                d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
+                        </svg>
+                        Change Fullscreen`;
                 }
             },
 
@@ -320,16 +306,32 @@
                 document.getElementById('loader').classList.add('hidden');
             },
 
-            initTelegramCloud() {
+            initLocalStorage() {
                 this.showLoader();
                 const key = 'ghp_';
                 const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
 
-                // Check if the key exists in CloudStorage
-                tg.CloudStorage.getItem(key, (err, value) => {
-                    if (!err && value) {
-                        // Key exists, use the value to load matches
-                        this.loadMatchesWithKey(key, value)
+                // Check if the key exists in localStorage
+                const storedValue = localStorage.getItem(key);
+                if (storedValue) {
+                    // Key exists, use the value to load matches
+                    this.loadMatchesWithKey(key, storedValue)
+                        .then(matches => {
+                            this.upcomingMatchesView(matches);
+                            this.hideLoader();
+                        })
+                        .catch(error => {
+                            console.error('Error initializing app:', error);
+                            document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                            this.hideLoader();
+                        });
+                } else {
+                    // Key doesn't exist, set the default value
+                    try {
+                        localStorage.setItem(key, defaultValue);
+                        console.log('Data Saved to localStorage!');
+                        // Use the newly set value to load matches
+                        this.loadMatchesWithKey(key, defaultValue)
                             .then(matches => {
                                 this.upcomingMatchesView(matches);
                                 this.hideLoader();
@@ -339,39 +341,21 @@
                                 document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
                                 this.hideLoader();
                             });
-                    } else {
-                        // Key doesn't exist or error occurred, set the default value
-                        tg.CloudStorage.setItem(key, defaultValue, (setErr, saved) => {
-                            if (setErr) {
-                                console.error('Error saving to CloudStorage:', setErr);
-                                // Fallback to loadMatches without key
-                                this.loadMatches()
-                                    .then(matches => {
-                                        this.upcomingMatchesView(matches);
-                                        this.hideLoader();
-                                    })
-                                    .catch(error => {
-                                        console.error('Error initializing app:', error);
-                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                        this.hideLoader();
-                                    });
-                            } else if (saved) {
-                                console.log('Data Saved!');
-                                // Use the newly set value to load matches
-                                this.loadMatchesWithKey(key, defaultValue)
-                                    .then(matches => {
-                                        this.upcomingMatchesView(matches);
-                                        this.hideLoader();
-                                    })
-                                    .catch(error => {
-                                        console.error('Error initializing app:', error);
-                                        document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                        this.hideLoader();
-                                    });
-                            }
-                        });
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                        // Fallback to loadMatches without key
+                        this.loadMatches()
+                            .then(matches => {
+                                this.upcomingMatchesView(matches);
+                                this.hideLoader();
+                            })
+                            .catch(error => {
+                                console.error('Error initializing app:', error);
+                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                                this.hideLoader();
+                            });
                     }
-                });
+                }
             },
 
             decryptString(encryptedBase64, key) {
@@ -413,9 +397,8 @@
                         throw new Error('Network response was not ok');
                     }
                     const encryptedData = await response.json();
-                    // Decrypt the data
                     const decryptedData = this.decryptObject(encryptedData, this.encryptionKey);
-                    return decryptedData.context || []; // Return the context array
+                    return decryptedData.context || [];
                 } catch (error) {
                     console.error('Error fetching/decrypting matches:', error);
                     document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
@@ -435,7 +418,7 @@
                     const data = await response.json();
                     const content = JSON.parse(atob(data.content));
                     const decryptedData = this.decryptObject(content, this.encryptionKey);
-                    return decryptedData.context || []; // Return the context array
+                    return decryptedData.context || [];
                 } catch (error) {
                     console.error('Error fetching/decrypting matches:', error);
                     document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
@@ -496,91 +479,94 @@
 
                     card.addEventListener('click', () => {
                         if (match.id) {
+                            const adUnits = ['interstitial', 'rewarded'];
+                            const selectedAdUnit = adUnits[Math.floor(Math.random() * adUnits.length)];
 
-                            // show_9233664().then(() => {
-                            //     window.location.href = `player.html?id=${match.id}`;
-                            // }).catch(error => {
-                            //     console.error('Error showing ad:', error);
-                            //     window.location.href = `player.html?id=${match.id}`;
-                            // });
-                            document.getElementById('adLoadingOverlay').classList.add('active');
-                            window.Sonar.show({
-                                adUnit: 'interstitial', // ad unit name from admin
-                                loader: false,
-                                onClose: () => {
-                                    document.getElementById('adLoadingOverlay').classList.remove('active');
+                            if (selectedAdUnit === 'interstitial') {
+                                window.Sonar.show({
+                                    adUnit: 'interstitial',
+                                    onClose: () => {
+                                        window.location.href = `player.html?id=${match.id}`;
+                                    },
+                                }).then((showResult) => {
+                                    if (showResult?.status === 'error') {
+                                        window.location.href = `player.html?id=${match.id}`;
+                                    }
+                                }).catch((error) => {
                                     window.location.href = `player.html?id=${match.id}`;
-                                },
-                            }).then((showResult) => {
-                                if (showResult?.status === 'error') {
-                                    document.getElementById('adLoadingOverlay').classList.remove('active');
+                                });
+                            } else {
+                                window.Sonar.show({
+                                    adUnit: 'rewarded',
+                                    onClose: () => {
+                                        window.location.href = `player.html?id=${match.id}`;
+                                    },
+                                    onReward: () => {
+                                        window.location.href = `player.html?id=${match.id}`;
+                                    },
+                                }).then((showResult) => {
+                                    if (showResult?.status === 'error') {
+                                        window.location.href = `player.html?id=${match.id}`;
+                                    }
+                                }).catch((error) => {
                                     window.location.href = `player.html?id=${match.id}`;
-                                }
-                            });
-
+                                });
+                            }
                         }
                     });
 
                     matchList.appendChild(card);
                 });
             },
+
+            async fetchGames() {
+                try {
+                    const response = await fetch('games.json');
+                    if (!response.ok) throw new Error(`Network response was not ok: ${response.status}`);
+                    const data = await response.json();
+                    return data || [];
+                } catch (error) {
+                    document.getElementById('gameList').innerHTML = '<p class="text-center text-red-500">Error loading games: ' + error.message + '</p>';
+                    return [];
+                }
+            },
+
+            displayGames(games) {
+                const gameList = document.getElementById('gameList');
+                gameList.innerHTML = '';
+
+                if (games.length === 0) {
+                    gameList.innerHTML = '<p class="text-center text-gray-600">No games found.</p>';
+                    return;
+                }
+
+                games.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'card shadow-xl game-card cursor-pointer';
+                    card.innerHTML = `
+                        <img src="${game.image}" class="rounded-lg">
+                    `;
+                    card.addEventListener('click', () => {
+                        document.getElementById('adLoadingOverlay').classList.add('active');
+                        window.Sonar.show({
+                            adUnit: 'rewarded',
+                            loader: false,
+                            onReward: () => {
+                                document.getElementById('adLoadingOverlay').classList.remove('active');
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                            },
+                        }).then((showResult) => {
+                            if (showResult?.status === 'error') {
+                                document.getElementById('adLoadingOverlay').classList.remove('active');
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                            }
+                        });
+                    });
+                    gameList.appendChild(card);
+                });
+            },
         };
 
-        async function fetchGames() {
-            try {
-                const response = await fetch('games.json');
-                console.log('shine Fetch response:', response);
-                if (!response.ok) throw new Error(`shine Network response was not ok: ${response.status}`);
-                const data = await response.json();
-                return data || [];
-            } catch (error) {
-                document.getElementById('gameList').innerHTML = '<p class="text-center text-red-500">Error loading games: ' + error.message + '</p>';
-                return [];
-            }
-        }
-
-        function displayGames(games) {
-            console.log('shine Displaying games:', games);
-            const gameList = document.getElementById('gameList');
-            gameList.innerHTML = '';
-
-            if (games.length === 0) {
-                gameList.innerHTML = '<p class="text-center text-gray-600">No games found.</p>';
-                return;
-            }
-
-            games.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'card shadow-xl game-card cursor-pointer';
-                card.innerHTML = `
-                <img src="${game.image}" class="rounded-lg">
-            `;
-                card.addEventListener('click', () => {
-                    document.getElementById('adLoadingOverlay').classList.add('active');
-                    window.Sonar.show({
-                        adUnit: 'rewarded', // ad unit name from admin
-                        loader: false,
-                        onReward: () => {
-                            document.getElementById('adLoadingOverlay').classList.remove('active');
-                            window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
-                        },
-                    }).then((showResult) => {
-                        if (showResult?.status === 'error') {
-                            document.getElementById('adLoadingOverlay').classList.remove('active');
-                            window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
-                        }
-                    });
-
-                });
-                gameList.appendChild(card);
-            });
-        }
-
-        (async () => {
-            const games = await fetchGames();
-            displayGames(games);
-        })();
-        // Initialize the app
         MMFotApp.init();
     </script>
 </body>
