@@ -42,6 +42,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const gameUrl = urlParams.get('url');
+        const isFullscreen = urlParams.get('fullscreen');
         if (gameUrl) {
             document.getElementById('gameFrame').src = decodeURIComponent(gameUrl);
         } else {
@@ -58,15 +59,11 @@
             },
 
             initFullscreen() {
-                tg.CloudStorage.getItem('fullscreen', function (err, value) {
-                    if (!err && value) {
-                        if (value === 'yes') {
-                            Telegram.WebApp.requestFullscreen();
-                        } else {
-                            Telegram.WebApp.exitFullscreen();
-                        }
-                    }
-                });
+                if (isFullscreen) {
+                    Telegram.WebApp.requestFullscreen();
+                } else {
+                    Telegram.WebApp.exitFullscreen();
+                }
             }
 
         };

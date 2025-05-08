@@ -188,7 +188,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.2 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.3 beta</h5>
         <div id="bn2mmfot"></div>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
@@ -203,24 +203,16 @@
     <script>
         window.Sonar.show({ adUnit: "bn2mmfot" }).then((showResult) => {
             if (showResult?.status === 'error') {
-                console.error('Ad bn2mmfot failed to show');
                 document.getElementById('bn2mmfot').style.display = 'none';
-            } else {
-                console.log('Ad bn2mmfot is showing');
             }
         }).catch((error) => {
-            console.error('Error with bn2mmfot ad:', error);
             document.getElementById('bn2mmfot').style.display = 'none';
         });
         window.Sonar.show({ adUnit: "bnmmfot" }).then((showResult) => {
             if (showResult?.status === 'error') {
-                console.error('Ad bnmmfot failed to show');
                 document.getElementById('bnmmfot').style.display = 'none';
-            } else {
-                console.log('Ad bnmmfot is showing');
             }
         }).catch((error) => {
-            console.error('Error with bnmmfot ad:', error);
             document.getElementById('bnmmfot').style.display = 'none';
         });
     </script>
@@ -237,6 +229,10 @@
             apiFirst: "ghp_",
             apiSecond: "Lb8tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
             now: moment.tz("Asia/Yangon"),
+            matchHour: 3.5,
+            intId: "interstitial",
+            rewardId: "rewarded",
+            isFullscreen: false,
 
             init() {
                 if (tg) {
@@ -267,8 +263,10 @@
             toggleFullscreen(el) {
                 if (tg.isFullscreen) {
                     tg.exitFullscreen();
+                    this.isFullscreen = false;
                 } else {
                     tg.requestFullscreen();
+                    this.isFullscreen = true;
                 }
             },
 
@@ -441,10 +439,13 @@
 
             upcomingMatchesView(matches) {
                 const matchList = document.getElementById('matchList');
+                const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
                 const upcomingMatches = matches.filter(match => {
-                    if (!match.date || !match.time) return false;
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
-                    return this.now.isBefore(matchDateTime.clone().add(3, 'hours'));
+                    if (!match.timestamp) return false;
+                    // Convert Unix timestamp (seconds) to milliseconds for moment
+                    const matchDateTime = moment.tz(match.timestamp * 1000, userTimezone);
+                    return this.now.isBefore(matchDateTime.clone().add(this.matchHour, 'hours'));
                 });
 
                 if (upcomingMatches.length === 0) {
@@ -453,66 +454,71 @@
                 }
 
                 upcomingMatches.forEach(match => {
-                    const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                    // Convert timestamp to user's local timezone
+                    const matchDateTime = moment.tz(match.timestamp * 1000, userTimezone);
                     const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
-                    const threeHoursAfter = matchDateTime.clone().add(3, 'hours');
+                    const threeHoursAfter = matchDateTime.clone().add(this.matchHour, 'hours');
 
                     const isLive = this.now.isBetween(tenMinutesBefore, threeHoursAfter);
+
+                    // Format date and time for display in user's local timezone
+                    const formattedDate = matchDateTime.format('MMM D');
+                    const formattedTime = matchDateTime.format('hh:mm A');
 
                     const card = document.createElement('div');
                     card.className = 'card shadow-xl p-1 flex flex-col items-center';
                     card.innerHTML = `
-                        <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
-                        <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
-                            <div class="col-span-4 flex flex-col items-center home-name">
-                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
-                            </div>
-                            <div class="col-span-3 flex flex-col items-center match-date match-time">
-                                <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
-                                <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
-                                ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
-                            </div>
-                            <div class="col-span-4 flex flex-col items-center away-name">
-                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
-                            </div>
-                        </div>
-                    `;
+            <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
+            <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
+                <div class="col-span-4 flex flex-col items-center home-name">
+                    <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                    <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
+                </div>
+                <div class="col-span-3 flex flex-col items-center match-date match-time">
+                    <p class="text-xs md:text-sm font-semibold">${formattedDate}</p>
+                    <p class="text-xs md:text-sm font-bold">${formattedTime}</p>
+                    ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                </div>
+                <div class="col-span-4 flex flex-col items-center away-name">
+                    <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                    <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
+                </div>
+            </div>
+        `;
 
                     card.addEventListener('click', () => {
                         if (match.id) {
-                            const adUnits = ['interstitial', 'rewarded'];
+                            const adUnits = [this.intId, this.rewardId];
                             const selectedAdUnit = adUnits[Math.floor(Math.random() * adUnits.length)];
 
-                            if (selectedAdUnit === 'interstitial') {
+                            if (selectedAdUnit === this.intId) {
                                 window.Sonar.show({
-                                    adUnit: 'interstitial',
+                                    adUnit: this.intId,
                                     onClose: () => {
-                                        window.location.href = `player.html?id=${match.id}`;
+                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                     },
                                 }).then((showResult) => {
                                     if (showResult?.status === 'error') {
-                                        window.location.href = `player.html?id=${match.id}`;
+                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                     }
                                 }).catch((error) => {
-                                    window.location.href = `player.html?id=${match.id}`;
+                                    window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                 });
                             } else {
                                 window.Sonar.show({
-                                    adUnit: 'rewarded',
+                                    adUnit: this.rewardId,
                                     onClose: () => {
-                                        window.location.href = `player.html?id=${match.id}`;
+                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                     },
                                     onReward: () => {
-                                        window.location.href = `player.html?id=${match.id}`;
+                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                     },
                                 }).then((showResult) => {
                                     if (showResult?.status === 'error') {
-                                        window.location.href = `player.html?id=${match.id}`;
+                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                     }
                                 }).catch((error) => {
-                                    window.location.href = `player.html?id=${match.id}`;
+                                    window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                                 });
                             }
                         }
@@ -551,19 +557,19 @@
                     `;
                     card.addEventListener('click', () => {
                         window.Sonar.show({
-                            adUnit: 'rewarded', // ad unit name from admin
+                            adUnit: this.rewardId,
                             onClose: () => {
-                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
                             },
                             onReward: () => {
-                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
                             },
                         }).then((showResult) => {
                             if (showResult?.status === 'error') {
-                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
                             }
                         }).catch((error) => {
-                            window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                            window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
                         });
                     });
                     gameList.appendChild(card);
