@@ -169,7 +169,7 @@
 <body>
     <section>
         <div class="flex gap-3 justify-center">
-            <button id="fullscreen_btn" onclick="MMFotApp.toggleFullscreen(this);"
+            <button id="fullscreen_btn"
                 class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px] no-hover">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
                     viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
@@ -188,7 +188,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.7 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.5 beta</h5>
         <div id="bn2mmfot"></div>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
@@ -218,6 +218,11 @@
     </script>
     <script>
         const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.BackButton.hide();
+        }
 
         const MMFotApp = {
             encryptionKey: "devxseven",
@@ -230,35 +235,45 @@
             isFullscreen: false,
 
             init() {
+                if (tg) {
+                    tg.ready();
+                    tg.expand();
+                    this.initFullscreen();
+                }
                 this.initReload();
                 this.initLocalStorage();
                 this.fetchGames().then(games => this.displayGames(games));
             },
 
-            fullscreenInit() {
-                Telegram.WebApp.onEvent('fullscreenChanged', function () {
-                    MMFotApp.updateFullscreenButton()
-                })
-                Telegram.WebApp.onEvent('fullscreenFailed', function (params) {
-                    MMFotApp.showAlert('fullscreenFailed: ' + params.error)
-                })
-                MMFotApp.updateFullscreenButton()
+            initFullscreen() {
+                if (!tg) return;
+                const fullscreenBtn = document.getElementById('fullscreen_btn');
+                fullscreenBtn.addEventListener('click', () => this.toggleFullscreen(fullscreenBtn));
+
+                tg.onEvent('fullscreenChanged', () => this.updateFullscreenButton(fullscreenBtn));
+                tg.onEvent('fullscreenFailed', (params) => {
+                    if (params.error === 'ALREADY_FULLSCREEN') {
+                        this.updateFullscreenButton(fullscreenBtn);
+                    } else {
+                        tg.showAlert('Fullscreen failed: ' + params.error);
+                    }
+                });
+                this.updateFullscreenButton(fullscreenBtn);
             },
 
             toggleFullscreen(el) {
-                if (Telegram.WebApp.isFullscreen) {
-                    Telegram.WebApp.exitFullscreen();
+                if (tg.isFullscreen) {
+                    tg.exitFullscreen();
                     this.isFullscreen = false;
                 } else {
-                    Telegram.WebApp.requestFullscreen();
+                    tg.requestFullscreen();
                     this.isFullscreen = true;
                 }
             },
 
-            updateFullscreenButton() {
-                const fullscreenBtn = document.getElementById('fullscreen_btn');
-                if (Telegram.WebApp.isFullscreen) {
-                    fullscreenBtn.innerHTML = `
+            updateFullscreenButton(el) {
+                if (tg.isFullscreen) {
+                    el.innerHTML = `
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
                             fill="var(--tg-theme-text-color, #222)">
                             <path 
@@ -266,7 +281,7 @@
                         </svg>
                         Exit Fullscreen`;
                 } else {
-                    fullscreenBtn.innerHTML = `
+                    el.innerHTML = `
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
                             fill="var(--tg-theme-text-color, #222)">
                             <path
@@ -563,12 +578,7 @@
             },
         };
 
-        try {
-            MMFotApp.init();
-        } catch (e) { }
-        try {
-            MMFotApp.fullscreenInit();
-        } catch (e) { }
+        MMFotApp.init();
     </script>
 </body>
 
