@@ -108,8 +108,11 @@
             color: var(--tg-theme-text-color, #222);
         }
 
-        .button:hover {
-            background-color: #e7e7e7;
+        .no-hover:hover {
+            background-color: inherit !important;
+            transform: none !important;
+            box-shadow: inherit !important;
+            cursor: default !important;
         }
 
         .game-card img {
@@ -167,7 +170,7 @@
     <section>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
-                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px] no-hover">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
                     viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
                     <path
@@ -176,7 +179,7 @@
                 Change Fullscreen
             </button>
             <button id="reload_btn"
-                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
+                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px] no-hover">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
                     viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
                     <path
@@ -547,19 +550,20 @@
                         <img src="${game.image}" class="rounded-lg">
                     `;
                     card.addEventListener('click', () => {
-                        document.getElementById('adLoadingOverlay').classList.add('active');
                         window.Sonar.show({
-                            adUnit: 'rewarded',
-                            loader: false,
+                            adUnit: 'rewarded', // ad unit name from admin
+                            onClose: () => {
+                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
+                            },
                             onReward: () => {
-                                document.getElementById('adLoadingOverlay').classList.remove('active');
                                 window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                             },
                         }).then((showResult) => {
                             if (showResult?.status === 'error') {
-                                document.getElementById('adLoadingOverlay').classList.remove('active');
                                 window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                             }
+                        }).catch((error) => {
+                            window.location.href = `game.html?url=${encodeURIComponent(game.embed)}`;
                         });
                     });
                     gameList.appendChild(card);
