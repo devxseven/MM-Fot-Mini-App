@@ -43,7 +43,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const gameUrl = urlParams.get('url');
-        const isFullscreen = urlParams.get('fullscreen');
+        const isFullscreen = urlParams.get('fullscreen') === 'true';
         if (gameUrl) {
             document.getElementById('gameFrame').src = decodeURIComponent(gameUrl);
         } else {
