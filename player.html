@@ -643,7 +643,7 @@
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
 
-                    if (this.isFullscreen === 'false' && !state) {
+                    if (!this.isFullscreen && !state) {
                         if (tg) {
                             tg.exitFullscreen();
                         }
