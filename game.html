@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://static.sonartech.io/lib/1.0.0/sonar.js?appId=app_9eebc533&isDebug=true"></script>
     <style>
         body {
             margin: 0;
@@ -21,16 +22,36 @@
 
         iframe {
             width: 100%;
-            height: 100%;
+            flex: 1;
+            /* Takes remaining space above the footer */
             border: none;
-            padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 0px);
+        }
+
+        #bnmmfot {
+            width: 100%;
+            height: 70px;
+            /* Adjust height as needed for the ad */
         }
     </style>
 </head>
 
 <body>
+    <div id="bnmmfot"></div>
     <iframe id="gameFrame" src=""> </iframe>
-
+    <script>
+        window.Sonar.show({ adUnit: "bnmmfot" }).then((showResult) => {
+            if (showResult?.status === 'error') {
+                console.error('Ad bnmmfot failed to show');
+                // Optionally hide bnmmfot div if desired
+                document.getElementById('bnmmfot').style.display = 'none';
+            } else {
+                console.log('Ad bnmmfot is showing');
+            }
+        }).catch((error) => {
+            console.error('Error with bnmmfot ad:', error);
+            document.getElementById('bnmmfot').style.display = 'none'; // Hide bnmmfot div on error
+        });
+    </script>
     <script>
 
         const tg = window.Telegram.WebApp;
