@@ -148,7 +148,7 @@
         <div class="spinner"></div>
     </div>
     <section>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.9 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.0 beta</h5>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
                 class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
@@ -587,10 +587,16 @@
                         tooltip: 'Fullscreen',
                         index: 100,
                         click: async function () {
+                            const getFullscreenSetting = () => {
+                                return new Promise((resolve) => {
+                                    resolve(isUrlFullscreen); // Resolve the current value of isUrlFullscreen
+                                });
+                            };
                             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
                             try {
                                 if (tg) {
-                                    if (!isUrlFullscreen) {
+                                    const value = await getFullscreenSetting();
+                                    if (!value) {
                                         if (!art.fullscreenWeb) {
                                             await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
                                             await delay(1000); // 1-second delay
@@ -644,9 +650,15 @@
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
 
+                    const getFullscreenSetting = () => {
+                        return new Promise((resolve) => {
+                            resolve(isUrlFullscreen); // Resolve the current value of isUrlFullscreen
+                        });
+                    };
                     (async () => {
                         try {
-                            if (!isUrlFullscreen && !state) {
+                            const value = await getFullscreenSetting();
+                            if (!value && !state) {
                                 Telegram.WebApp.exitFullscreen();
                             }
                         } catch (err) {
