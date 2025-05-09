@@ -148,6 +148,7 @@
         <div class="spinner"></div>
     </div>
     <section>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.7 beta</h5>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
                 class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
@@ -591,11 +592,11 @@
                                     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
                                     if (!this.isFullscreen) {
                                         if (!art.fullscreenWeb) {
-                                            await tg.requestFullscreen();
-                                            await delay(1000);
+                                            await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
+                                            await delay(1000); // 1-second delay
                                             art.fullscreenWeb = !art.fullscreenWeb;
                                         } else {
-                                            tg.exitFullscreen();
+                                            Telegram.WebApp.exitFullscreen(); // Assumes exitFullscreen is synchronous
                                             art.fullscreenWeb = !art.fullscreenWeb;
                                         }
                                     } else {
@@ -643,10 +644,12 @@
                     const controlsLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-controls-left');
                     const videoLeft = artPlayer.querySelector('.art-video-player.art-mobile .art-video');
 
-                    if (!this.isFullscreen && !state) {
-                        if (tg) {
-                            tg.exitFullscreen();
+                    try {
+                        if (!this.isFullscreen && !state) {
+                            Telegram.WebApp.exitFullscreen();
                         }
+                    } catch (err) {
+                        console.error('Error accessing fullscreen setting:', err);
                     }
 
                     if (state) { // fullscreenWeb is true
