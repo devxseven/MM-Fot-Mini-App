@@ -188,7 +188,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.8 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.9 beta</h5>
         <div id="bn2mmfot"></div>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
@@ -230,8 +230,8 @@
             apiSecond: "Lb8tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
             now: moment(),
             matchHour: 3.5,
-            intId: "interstitial",
-            rewardId: "rewarded",
+            intId: "intmmfot",
+            rewardId: "rwmmfot",
             isFullscreen: false,
 
             init() {
@@ -489,40 +489,50 @@
             </div>
         `;
 
+                    let clickCount = 0;
                     card.addEventListener('click', () => {
                         if (match.id) {
-                            const adUnits = [this.intId, this.rewardId];
-                            const selectedAdUnit = adUnits[Math.floor(Math.random() * adUnits.length)];
+                            const userAgent = navigator.userAgent.toLowerCase();
+                            const isMobile = /mobile|android|iphone|ipad|tablet|blackberry|iemobile|opera mini/i.test(userAgent);
 
-                            if (selectedAdUnit === this.intId) {
-                                window.Sonar.show({
-                                    adUnit: this.intId,
-                                    onClose: () => {
+                            // Combine user agent and screen width for better accuracy
+                            if (isMobile) {
+                                const adUnits = [this.intId, this.rewardId];
+                                const selectedAdUnit = adUnits[Math.floor(Math.random() * adUnits.length)];
+
+                                if (selectedAdUnit === this.intId) {
+                                    window.Sonar.show({
+                                        adUnit: this.intId,
+                                        onClose: () => {
+                                            window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
+                                        },
+                                    }).then((showResult) => {
+                                        if (showResult?.status === 'error') {
+                                            window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
+                                        }
+                                    }).catch((error) => {
                                         window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                    },
-                                }).then((showResult) => {
-                                    if (showResult?.status === 'error') {
+                                    });
+                                } else {
+                                    window.Sonar.show({
+                                        adUnit: this.rewardId,
+                                        onClose: () => {
+                                            window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
+                                        },
+                                        onReward: () => {
+                                            window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
+                                        },
+                                    }).then((showResult) => {
+                                        if (showResult?.status === 'error') {
+                                            window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
+                                        }
+                                    }).catch((error) => {
                                         window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                    }
-                                }).catch((error) => {
-                                    window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                });
+                                    });
+                                }
                             } else {
-                                window.Sonar.show({
-                                    adUnit: this.rewardId,
-                                    onClose: () => {
-                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                    },
-                                    onReward: () => {
-                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                    },
-                                }).then((showResult) => {
-                                    if (showResult?.status === 'error') {
-                                        window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                    }
-                                }).catch((error) => {
-                                    window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
-                                });
+                                window.open('https://www.profitableratecpm.com/ewdrwi8p?key=c3f8195dd58a3e2c408fed211cc8ddee', '_blank');
+                                window.location.href = `player.html?id=${match.id}&fullscreen=${this.isFullscreen}`;
                             }
                         }
                     });
@@ -559,21 +569,30 @@
                         <img src="${game.image}" class="rounded-lg">
                     `;
                     card.addEventListener('click', () => {
-                        window.Sonar.show({
-                            adUnit: this.rewardId,
-                            onClose: () => {
+                        const userAgent = navigator.userAgent.toLowerCase();
+                        const isMobile = /mobile|android|iphone|ipad|tablet|blackberry|iemobile|opera mini/i.test(userAgent);
+
+                        // Combine user agent and screen width for better accuracy
+                        if (isMobile) {
+                            window.Sonar.show({
+                                adUnit: this.rewardId,
+                                onClose: () => {
+                                    window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
+                                },
+                                onReward: () => {
+                                    window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
+                                },
+                            }).then((showResult) => {
+                                if (showResult?.status === 'error') {
+                                    window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
+                                }
+                            }).catch((error) => {
                                 window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
-                            },
-                            onReward: () => {
-                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
-                            },
-                        }).then((showResult) => {
-                            if (showResult?.status === 'error') {
-                                window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
-                            }
-                        }).catch((error) => {
+                            });
+                        } else {
+                            window.open('https://www.profitableratecpm.com/ewdrwi8p?key=c3f8195dd58a3e2c408fed211cc8ddee', '_blank');
                             window.location.href = `game.html?url=${encodeURIComponent(game.embed)}&fullscreen=${this.isFullscreen}`;
-                        });
+                        }
                     });
                     gameList.appendChild(card);
                 });
