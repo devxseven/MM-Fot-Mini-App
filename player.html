@@ -148,7 +148,7 @@
         <div class="spinner"></div>
     </div>
     <section>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.1 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.2 beta</h5>
         <div class="flex gap-3 justify-center">
             <button id="reload_btn"
                 class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px]">
@@ -366,7 +366,8 @@
                     return;
                 }
 
-                const matchDateTime = moment.tz(`${match.date} ${match.time}`, 'MMM D hh:mm A', "Asia/Yangon");
+                const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const matchDateTime = moment.tz(match.timestamp * 1000, userTimezone);
                 const distance = matchDateTime.diff(this.now);
 
                 this.displayMatchDetails(match, distance);
@@ -384,6 +385,10 @@
                 const card = document.createElement('div');
                 card.className = 'card shadow-xl p-1 flex flex-col items-center';
                 const isLive = distance <= this.showtime;
+                const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const matchDateTime = moment.tz(match.timestamp * 1000, userTimezone);
+                const formattedDate = matchDateTime.format('MMM D');
+                const formattedTime = matchDateTime.format('hh:mm A');
                 card.innerHTML = `
                     <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
                     <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
@@ -392,8 +397,8 @@
                             <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
                         </div>
                         <div class="col-span-3 flex flex-col items-center match-date match-time">
-                            <p class="text-xs md:text-sm font-semibold">${match.date || ''}</p>
-                            <p class="text-xs md:text-sm font-bold">${match.time || ''}</p>
+                            <p class="text-xs md:text-sm font-semibold">${formattedDate || ''}</p>
+                            <p class="text-xs md:text-sm font-bold">${formattedTime || ''}</p>
                             ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
                         </div>
                         <div class="col-span-4 flex flex-col items-center away-name">
