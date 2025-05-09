@@ -188,7 +188,7 @@
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 1.9 beta</h5>
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.0 beta</h5>
         <div id="bn2mmfot"></div>
         <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
@@ -492,11 +492,8 @@
                     let clickCount = 0;
                     card.addEventListener('click', () => {
                         if (match.id) {
-                            const userAgent = navigator.userAgent.toLowerCase();
-                            const isMobile = /mobile|android|iphone|ipad|tablet|blackberry|iemobile|opera mini/i.test(userAgent);
-
                             // Combine user agent and screen width for better accuracy
-                            if (isMobile) {
+                            if (window.Sonar) {
                                 const adUnits = [this.intId, this.rewardId];
                                 const selectedAdUnit = adUnits[Math.floor(Math.random() * adUnits.length)];
 
@@ -569,11 +566,8 @@
                         <img src="${game.image}" class="rounded-lg">
                     `;
                     card.addEventListener('click', () => {
-                        const userAgent = navigator.userAgent.toLowerCase();
-                        const isMobile = /mobile|android|iphone|ipad|tablet|blackberry|iemobile|opera mini/i.test(userAgent);
-
                         // Combine user agent and screen width for better accuracy
-                        if (isMobile) {
+                        if (window.Sonar) {
                             window.Sonar.show({
                                 adUnit: this.rewardId,
                                 onClose: () => {
