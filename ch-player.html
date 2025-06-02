@@ -58,6 +58,7 @@
                         url: videoUrl,
                         autoplay: true,
                         isLive: true,
+                        fullscreenWeb: true,
                         autoOrientation: true,
                         layers: [{
                             html: '<span style="color:yellow; font-weight: 700; font-size: smaller;">mmfot.com</span>',
@@ -179,6 +180,16 @@
                             onIcon.style.display = state ? 'none' : 'inline-flex';
                             offIcon.style.display = state ? 'inline-flex' : 'none';
                         })();
+                    });
+                    art.on('fullscreen', (state) => {
+                        const onIcon = document.querySelector('.art-icon-fullscreenWebOnCus');
+                        const offIcon = document.querySelector('.art-icon-fullscreenWebOffCus');
+                        if (!onIcon || !offIcon) {
+                            console.error('Fullscreen icons not found in click handler:', this.innerHTML);
+                            return;
+                        }
+                        onIcon.style.display = state ? 'none' : 'inline-flex';
+                        offIcon.style.display = state ? 'inline-flex' : 'none';
                     });
                 } else {
                     document.body.innerHTML = '<p class="text-center text-red-500">No video URL provided.</p>';

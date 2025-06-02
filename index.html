@@ -28,7 +28,7 @@
             margin: 0;
             padding: 0;
             color-scheme: var(--tg-color-scheme);
-            padding-bottom: 64px;
+            padding-bottom: 74px;
             /* Space for bottom nav on small screens */
         }
 
@@ -122,7 +122,6 @@
             width: 100%;
             height: 125px;
             object-fit: cover;
-            border-radius: 8px 8px 0 0;
         }
 
         #bnmmfot {
@@ -209,7 +208,7 @@
         }
 
         .nav-button.active {
-            background-color: var(--tg-theme-primary-color, #1976d2);
+            background-color: var(--tg-theme-primary-color, #2f2f2f);
             color: var(--tg-theme-button-text-color, #ffffff);
         }
 
@@ -229,7 +228,6 @@
         @media (min-width: 640px) {
             body {
                 padding-bottom: 0;
-                padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 0px);
                 /* Space for top nav on larger screens */
             }
 
@@ -245,6 +243,7 @@
         @media (max-width: 639px) {
             .nav-bar-top {
                 display: none;
+                padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 0px);
             }
 
             .nav-bar-bottom {
@@ -277,7 +276,7 @@
                 <path
                     d="M320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Zm0 0v-480 480Z" />
             </svg>
-            TV Channels
+            TV
         </button>
         <button class="nav-button" data-tab="games">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
@@ -324,7 +323,7 @@
 
     <section id="channels" class="content-section">
         <h2 class="text-2xl font-bold mb-4">Tv Channels</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="channelList"></div>
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4" id="channelList"></div>
     </section>
 
     <section id="games" class="content-section">
@@ -346,7 +345,7 @@
                 <path
                     d="M320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Zm0 0v-480 480Z" />
             </svg>
-            TV Channels
+            TV
         </button>
         <button class="nav-button" data-tab="games">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
@@ -785,13 +784,13 @@
 
                 channels.forEach(channel => {
                     const card = document.createElement('div');
-                    card.className = 'card shadow-xl cursor-pointer bg-gray-800 text-white flex items-center justify-center h-32 rounded-lg';
+                    card.className = 'card shadow-xl cursor-pointer flex items-center justify-center h-32 rounded-lg';
                     card.innerHTML = `
         <span class="text-lg font-bold text-center">${channel.name}</span>
     `;
                     card.addEventListener('click', () => {
-                        
-                            window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+
+                        window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
                     });
                     channelList.appendChild(card);
                 });
