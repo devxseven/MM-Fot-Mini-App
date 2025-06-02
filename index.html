@@ -22,29 +22,32 @@
             height: auto;
             --bg-color: var(--tg-theme-section-bg-color, #fff);
             --card-bg-color: var(--tg-theme-bg-color, #fff);
-            font-family: sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: var(--bg-color);
-            color: var(--tg-theme-text-color, #222);
+            color: var(--tg-theme-text-color, #212121);
             margin: 0;
             padding: 0;
             color-scheme: var(--tg-color-scheme);
+            padding-bottom: 64px;
+            /* Space for bottom nav on small screens */
         }
 
         body.gray {
-            background-color: var(--tg-theme-section-bg-color, #efefef);
+            background-color: var(--tg-theme-section-bg-color, #f5f5f5);
         }
 
         section {
-            padding: 15px;
+            padding: 16px;
             text-align: center;
             background-color: var(--bg-color, #ffffff);
-            padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 15px);
-            padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 15px);
-            padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 15px);
+            padding-left: calc(var(--tg-safe-area-inset-left, 0px) + var(--tg-content-safe-area-inset-left, 0px) + 16px);
+            padding-right: calc(var(--tg-safe-area-inset-right, 0px) + var(--tg-content-safe-area-inset-right, 0px) + 16px);
         }
 
         .card {
             background-color: var(--card-bg-color, #ffffff);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 3px rgba(0, 0, 0, 0.24);
+            border-radius: 8px;
         }
 
         @keyframes beat {
@@ -76,10 +79,10 @@
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(0, 0, 0, 0.1);
-            border-top: 5px solid var(--tg-theme-text-color, #222);
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--tg-theme-primary-color, #1976d2);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             will-change: transform;
@@ -100,18 +103,18 @@
         .away-name,
         .match-date,
         .match-time {
-            color: var(--tg-theme-text-color, #222);
+            color: var(--tg-theme-text-color, #212121);
         }
 
         .button {
             background-color: var(--card-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #222);
+            color: var(--tg-theme-text-color, #212121);
         }
 
         .no-hover:hover {
             background-color: inherit !important;
             transform: none !important;
-            box-shadow: inherit !important;
+            box-shadow: none !important;
             cursor: default !important;
         }
 
@@ -119,7 +122,7 @@
             width: 100%;
             height: 125px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 8px 8px 0 0;
         }
 
         #bnmmfot {
@@ -156,66 +159,204 @@
         }
 
         .loading-overlay .spinner {
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             border: 6px solid rgba(255, 255, 255, 0.3);
             border-top: 6px solid #fff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        /* Navigation Bar Styles */
+        .nav-bar {
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+        }
+
+        .nav-bar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-bar-top {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 0;
+            width: 100%;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--tg-theme-text-color, #212121);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 36px;
+            border-radius: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+            text-transform: uppercase;
+        }
+
+        .nav-button.active {
+            background-color: var(--tg-theme-primary-color, #1976d2);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+
+        .nav-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @media (min-width: 640px) {
+            body {
+                padding-bottom: 0;
+                padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 0px);
+                /* Space for top nav on larger screens */
+            }
+
+            .nav-bar-bottom {
+                display: none;
+            }
+
+            .nav-bar-top {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 639px) {
+            .nav-bar-top {
+                display: none;
+            }
+
+            .nav-bar-bottom {
+                display: flex;
+            }
+
+            .nav-button {
+                flex-direction: column;
+                font-size: 12px;
+                flex: 1;
+                text-align: center;
+                margin: 0 5px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Navigation Bar for Larger Screens -->
+    <nav class="nav-bar nav-bar-top">
+        <button class="nav-button active" data-tab="home">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240H440v240H160Z" />
+            </svg>
+            Home
+        </button>
+        <button class="nav-button" data-tab="channels">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Zm0 0v-480 480Z" />
+            </svg>
+            TV Channels
+        </button>
+        <button class="nav-button" data-tab="games">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M189-160q-60 0-102.5-43T42-307q0-9 1-18t3-18l84-336q14-54 57-87.5t98-33.5h390q55 0 98 33.5t57 87.5l84 336q2 9 3.5 18.5T919-306q0 61-43.5 103.5T771-160q-42 0-78-22t-54-60l-28-58q-5-10-15-15t-21-5H385q-11 0-21 5t-15 15l-28 58q-18 38-54 60t-78 22Zm3-80q19 0 34.5-10t23.5-27l28-57q15-31 44-48.5t63-17.5h190q34 0 63 18t45 48l28 57q8 17 23.5 27t34.5 10q28 0 48-18.5t21-46.5q0 1-2-19l-84-335q-7-27-28-44t-49-17H285q-28 0-49.5 17T208-659l-84 335q-2 6-2 18 0 28 20.5 47t49.5 19Zm348-280q17 0 28.5-11.5T580-560q0-17-11.5-28.5T540-600q-17 0-28.5 11.5T500-560q0 17 11.5 28.5T540-520Zm80-80q17 0 28.5-11.5T660-640q0-17-11.5-28.5T620-680q-17 0-28.5 11.5T580-640q0 17 11.5 28.5T620-600Zm0 160q17 0 28.5-11.5T660-480q0-17-11.5-28.5T620-520q-17 0-28.5 11.5T580-480q0 17 11.5 28.5T620-440Zm80-80q17 0 28.5-11.5T740-560q0-17-11.5-28.5T700-600q-17 0-28.5 11.5T660-560q0 17 11.5 28.5T700-520Zm-360 60q13 0 21.5-8.5T370-490v-40h40q13 0 21.5-8.5T440-560q0-13-8.5-21.5T410-590h-40v-40q0-13-8.5-21.5T340-660q-13 0-21.5 8.5T310-630v40h-40q-13 0-21.5 8.5T240-560q0 13 8.5 21.5T270-530h40v40q0 13 8.5 21.5T340-460Zm140-20Z" />
+            </svg>
+            Games
+        </button>
+    </nav>
+
+    <!-- Fullscreen and Reload Buttons -->
     <section>
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
-                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px] no-hover">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
-                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                class="btn text-sm md:text-base px-4 py-2 rounded-lg shadow-lg button h-auto min-h-[44px] no-hover flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 -960 960 960"
+                    fill="var(--tg-theme-text-color, #212121)">
                     <path
                         d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
                 </svg>
                 Change Fullscreen
             </button>
             <button id="reload_btn"
-                class="btn text-[11px] md:text-[14px] px-3 py-1 mb-4 rounded-lg shadow-lg button h-auto min-h-[40px] no-hover">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current"
-                    viewBox="0 -960 960 960" fill="var(--tg-theme-text-color, #222)">
+                class="btn text-sm md:text-base px-4 py-2 rounded-lg shadow-lg button h-auto min-h-[44px] no-hover flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 -960 960 960"
+                    fill="var(--tg-theme-text-color, #212121)">
                     <path
                         d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
                 </svg>
                 Reload
             </button>
         </div>
-        <h5 class="text-[11px] md:text-[14px] font-bold mb-4">version 2.0 beta</h5>
-        <div id="bn2mmfot"></div>
-        <h2 class="text-xl font-bold mb-4">Football Schedule Fixtures</h2>
+    </section>
+
+    <!-- Content Sections -->
+    <section id="home" class="content-section active">
+        <h5 class="text-sm md:text-base font-bold mb-4">version 2.0 beta</h5>
+        <h2 class="text-2xl font-bold mb-4">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
             <div class="spinner"></div>
         </div>
-        <div id="bnmmfot"></div>
-        <h2 class="text-xl font-bold my-4">Sports Games</h2>
+    </section>
+
+    <section id="channels" class="content-section">
+        <h2 class="text-2xl font-bold mb-4">Tv Channels</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="channelList"></div>
+    </section>
+
+    <section id="games" class="content-section">
+        <h2 class="text-2xl font-bold my-4">Sports Games</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4" id="gameList"></div>
     </section>
 
-    <script>
-        window.Sonar.show({ adUnit: "bn2mmfot" }).then((showResult) => {
-            if (showResult?.status === 'error') {
-                document.getElementById('bn2mmfot').style.display = 'none';
-            }
-        }).catch((error) => {
-            document.getElementById('bn2mmfot').style.display = 'none';
-        });
-        window.Sonar.show({ adUnit: "bnmmfot" }).then((showResult) => {
-            if (showResult?.status === 'error') {
-                document.getElementById('bnmmfot').style.display = 'none';
-            }
-        }).catch((error) => {
-            document.getElementById('bnmmfot').style.display = 'none';
-        });
-    </script>
+    <!-- Navigation Bar for Small Screens -->
+    <nav class="nav-bar nav-bar-bottom">
+        <button class="nav-button active" data-tab="home">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240H440v240H160Z" />
+            </svg>
+            Home
+        </button>
+        <button class="nav-button" data-tab="channels">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Zm0 0v-480 480Z" />
+            </svg>
+            TV Channels
+        </button>
+        <button class="nav-button" data-tab="games">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M189-160q-60 0-102.5-43T42-307q0-9 1-18t3-18l84-336q14-54 57-87.5t98-33.5h390q55 0 98 33.5t57 87.5l84 336q2 9 3.5 18.5T919-306q0 61-43.5 103.5T771-160q-42 0-78-22t-54-60l-28-58q-5-10-15-15t-21-5H385q-11 0-21 5t-15 15l-28 58q-18 38-54 60t-78 22Zm3-80q19 0 34.5-10t23.5-27l28-57q15-31 44-48.5t63-17.5h190q34 0 63 18t45 48l28 57q8 17 23.5 27t34.5 10q28 0 48-18.5t21-46.5q0 1-2-19l-84-335q-7-27-28-44t-49-17H285q-28 0-49.5 17T208-659l-84 335q-2 6-2 18 0 28 20.5 47t49.5 19Zm348-280q17 0 28.5-11.5T580-560q0-17-11.5-28.5T540-600q-17 0-28.5 11.5T500-560q0 17 11.5 28.5T540-520Zm80-80q17 0 28.5-11.5T660-640q0-17-11.5-28.5T620-680q-17 0-28.5 11.5T580-640q0 17 11.5 28.5T620-600Zm0 160q17 0 28.5-11.5T660-480q0-17-11.5-28.5T620-520q-17 0-28.5 11.5T580-480q0 17 11.5 28.5T620-440Zm80-80q17 0 28.5-11.5T740-560q0-17-11.5-28.5T700-600q-17 0-28.5 11.5T660-560q0 17 11.5 28.5T700-520Zm-360 60q13 0 21.5-8.5T370-490v-40h40q13 0 21.5-8.5T440-560q0-13-8.5-21.5T410-590h-40v-40q0-13-8.5-21.5T340-660q-13 0-21.5 8.5T310-630v40h-40q-13 0-21.5 8.5T240-560q0 13 8.5 21.5T270-530h40v40q0 13 8.5 21.5T340-460Zm140-20Z" />
+            </svg>
+            Games
+        </button>
+    </nav>
+
     <script>
         const tg = window.Telegram?.WebApp;
         if (tg) {
@@ -229,13 +370,14 @@
             fileName: "matches.json",
             filePath: "mdata",
             accName: "devxseven",
-            apiFirst: "ghp_",
-            apiSecond: "Lb8tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
+            apiFirst: "ghp_Lb8",
+            apiSecond: "tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
             now: moment(),
             matchHour: 3.5,
             intId: "intmmfot",
             rewardId: "rwmmfot",
             isFullscreen: false,
+            activeTab: 'home', // Track the active tab
 
             init() {
                 if (tg) {
@@ -244,8 +386,14 @@
                     this.initFullscreen();
                 }
                 this.initReload();
+                this.initNavigation();
                 this.initLocalStorage();
-                this.fetchGames().then(games => this.displayGames(games));
+                this.fetchData('games.json').then(games => this.displayGames(games));
+                this.fetchData('channels.json').then(channels => this.displayChannels(channels));
+                // Ensure active tab is set correctly on init
+                this.updateNavigation();
+                // Listen for window resize to maintain active tab state
+                window.addEventListener('resize', () => this.updateNavigation());
             },
 
             initFullscreen() {
@@ -277,8 +425,8 @@
             updateFullscreenButton(el) {
                 if (tg.isFullscreen) {
                     el.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                            fill="var(--tg-theme-text-color, #222)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 -960 960 960"
+                            fill="var(--tg-theme-text-color, #212121)">
                             <path 
                                 d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z"/>
                         </svg>
@@ -286,8 +434,8 @@
                     this.isFullscreen = true;
                 } else {
                     el.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 fill-current" viewBox="0 -960 960 960"
-                            fill="var(--tg-theme-text-color, #222)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 -960 960 960"
+                            fill="var(--tg-theme-text-color, #212121)">
                             <path
                                 d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z" />
                         </svg>
@@ -305,6 +453,36 @@
                 window.location.reload();
             },
 
+            initNavigation() {
+                const navButtons = document.querySelectorAll('.nav-button');
+                const sections = document.querySelectorAll('.content-section');
+
+                navButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Update active tab
+                        this.activeTab = button.getAttribute('data-tab');
+                        this.updateNavigation();
+                    });
+                });
+            },
+
+            updateNavigation() {
+                const navButtons = document.querySelectorAll('.nav-button');
+                const sections = document.querySelectorAll('.content-section');
+
+                // Remove active class from all buttons and sections
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
+
+                // Add active class to the current tab's button and section
+                navButtons.forEach(button => {
+                    if (button.getAttribute('data-tab') === this.activeTab) {
+                        button.classList.add('active');
+                    }
+                });
+                document.getElementById(this.activeTab).classList.add('active');
+            },
+
             showLoader() {
                 document.getElementById('loader').classList.remove('hidden');
             },
@@ -315,8 +493,8 @@
 
             initLocalStorage() {
                 this.showLoader();
-                const key = 'ghp_';
-                const defaultValue = 'QfJD9SzUBB6pRkQA26fo18WJJP0kcH1b5SzQ';
+                const key = 'ghp_NSe';
+                const defaultValue = '8ALuVwWUOHdLS3U54FsHJBKySNJ00tLOQ';
 
                 // Check if the key exists in localStorage
                 const storedValue = localStorage.getItem(key);
@@ -474,23 +652,23 @@
                     const card = document.createElement('div');
                     card.className = 'card shadow-xl p-1 flex flex-col items-center';
                     card.innerHTML = `
-            <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
-            <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
-                <div class="col-span-4 flex flex-col items-center home-name">
-                    <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                    <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
-                </div>
-                <div class="col-span-3 flex flex-col items-center match-date match-time">
-                    <p class="text-xs md:text-sm font-semibold">${formattedDate || ''}</p>
-                    <p class="text-xs md:text-sm font-bold">${formattedTime || ''}</p>
-                    ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
-                </div>
-                <div class="col-span-4 flex flex-col items-center away-name">
-                    <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
-                    <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
-                </div>
-            </div>
-        `;
+                        <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
+                        <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
+                            <div class="col-span-4 flex flex-col items-center home-name">
+                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
+                            </div>
+                            <div class="col-span-3 flex flex-col items-center match-date match-time">
+                                <p class="text-xs md:text-sm font-semibold">${formattedDate || ''}</p>
+                                <p class="text-xs md:text-sm font-bold">${formattedTime || ''}</p>
+                                ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
+                            </div>
+                            <div class="col-span-4 flex flex-col items-center away-name">
+                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
+                            </div>
+                        </div>
+                    `;
 
                     let clickCount = 0;
                     card.addEventListener('click', () => {
@@ -541,9 +719,9 @@
                 });
             },
 
-            async fetchGames() {
+            async fetchData(url) {
                 try {
-                    const response = await fetch('games.json');
+                    const response = await fetch(url);
                     if (!response.ok) throw new Error(`Network response was not ok: ${response.status}`);
                     const data = await response.json();
                     return data || [];
@@ -592,6 +770,30 @@
                         }
                     });
                     gameList.appendChild(card);
+                });
+            },
+
+
+            displayChannels(channels) {
+                const channelList = document.getElementById('channelList');
+                channelList.innerHTML = '';
+
+                if (channels.length === 0) {
+                    channelList.innerHTML = '<p class="text-center text-gray-600">No Channels found.</p>';
+                    return;
+                }
+
+                channels.forEach(channel => {
+                    const card = document.createElement('div');
+                    card.className = 'card shadow-xl cursor-pointer bg-gray-800 text-white flex items-center justify-center h-32 rounded-lg';
+                    card.innerHTML = `
+        <span class="text-lg font-bold text-center">${channel.name}</span>
+    `;
+                    card.addEventListener('click', () => {
+                        
+                            window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                    });
+                    channelList.appendChild(card);
                 });
             },
         };
