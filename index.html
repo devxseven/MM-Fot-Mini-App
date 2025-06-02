@@ -376,8 +376,8 @@
             fileName: "matches.json",
             filePath: "mdata",
             accName: "devxseven",
-            apiFirst: "ghp_Lb8",
-            apiSecond: "tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
+            apiFirst: "ghp_",
+            apiSecond: "Lb8tjXZ9BggZwnUpJWneZ7NMa7Cmmo4bjZ4H",
             now: moment(),
             matchHour: 3.5,
             intId: "intmmfot",
@@ -499,54 +499,27 @@
 
             initLocalStorage() {
                 this.showLoader();
-                const key = 'ghp_NSe';
-                const defaultValue = '8ALuVwWUOHdLS3U54FsHJBKySNJ00tLOQ';
+                const key = 'ghp_';
+                const defaultValue = '1fROTWDmzBhuXlJq2d10bKAEjqISW72UUPU2';
 
-                // Check if the key exists in localStorage
-                const storedValue = localStorage.getItem(key);
-                if (storedValue) {
-                    // Key exists, use the value to load matches
-                    this.loadMatchesWithKey(key, storedValue)
-                        .then(matches => {
-                            this.upcomingMatchesView(matches);
-                            this.hideLoader();
-                        })
-                        .catch(error => {
-                            console.error('Error initializing app:', error);
-                            document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                            this.hideLoader();
-                        });
-                } else {
-                    // Key doesn't exist, set the default value
-                    try {
-                        localStorage.setItem(key, defaultValue);
-                        console.log('Data Saved to localStorage!');
-                        // Use the newly set value to load matches
-                        this.loadMatchesWithKey(key, defaultValue)
-                            .then(matches => {
-                                this.upcomingMatchesView(matches);
-                                this.hideLoader();
-                            })
-                            .catch(error => {
-                                console.error('Error initializing app:', error);
-                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
-                                this.hideLoader();
-                            });
-                    } catch (error) {
-                        console.error('Error saving to localStorage:', error);
-                        // Fallback to loadMatches without key
+                this.loadMatchesWithKey(key, defaultValue)
+                    .then(matches => {
+                        this.upcomingMatchesView(matches);
+                        this.hideLoader();
+                    })
+                    .catch(error => {
+                        console.warn('loadMatchesWithKey failed, attempting loadMatches:', error);
                         this.loadMatches()
                             .then(matches => {
                                 this.upcomingMatchesView(matches);
                                 this.hideLoader();
                             })
-                            .catch(error => {
-                                console.error('Error initializing app:', error);
-                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error initializing app.</p>';
+                            .catch(fallbackError => {
+                                console.error('loadMatches failed:', fallbackError);
+                                document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Unable to load matches. Please try again later.</p>';
                                 this.hideLoader();
                             });
-                    }
-                }
+                    });
             },
 
             decryptString(encryptedBase64, key) {
@@ -582,39 +555,27 @@
             },
 
             async fetchAndDecryptJson() {
-                try {
-                    const response = await fetch(`https://raw.githubusercontent.com/${this.accName}/${this.filePath}/refs/heads/main/${this.fileName}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const encryptedData = await response.json();
-                    const decryptedData = this.decryptObject(encryptedData, this.encryptionKey);
-                    return decryptedData.context || [];
-                } catch (error) {
-                    console.error('Error fetching/decrypting matches:', error);
-                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
-                    return [];
+                const response = await fetch(`https://raw.githubusercontent.com/${this.accName}/${this.filePath}/refs/heads/main/${this.fileName}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+                const encryptedData = await response.json();
+                const decryptedData = this.decryptObject(encryptedData, this.encryptionKey);
+                return decryptedData.context || [];
             },
 
             async fetchAndDecryptJsonWithKey(key, value) {
-                try {
-                    const url = `https://api.github.com/repos/${this.accName}/${this.filePath}/contents/${this.fileName}`;
-                    const response = await fetch(url, {
-                        headers: {
-                            "Authorization": `token ${key}${value}`,
-                            "User-Agent": "GitHub-Admin-Panel"
-                        }
-                    });
-                    const data = await response.json();
-                    const content = JSON.parse(atob(data.content));
-                    const decryptedData = this.decryptObject(content, this.encryptionKey);
-                    return decryptedData.context || [];
-                } catch (error) {
-                    console.error('Error fetching/decrypting matches:', error);
-                    document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Error loading matches.</p>';
-                    return [];
-                }
+                const url = `https://api.github.com/repos/${this.accName}/${this.filePath}/contents/${this.fileName}`;
+                const response = await fetch(url, {
+                    headers: {
+                        "Authorization": `token ${key}${value}`,
+                        "User-Agent": "GitHub-Admin-Panel"
+                    }
+                });
+                const data = await response.json();
+                const content = JSON.parse(atob(data.content));
+                const decryptedData = this.decryptObject(content, this.encryptionKey);
+                return decryptedData.context || [];
             },
 
             async loadMatches() {
@@ -817,7 +778,7 @@
                             window.open('https://www.profitableratecpm.com/ewdrwi8p?key=c3f8195dd58a3e2c408fed211cc8ddee', '_blank');
                             window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
                         }
-                        
+
                     });
                     channelList.appendChild(card);
                 });
