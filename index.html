@@ -28,7 +28,7 @@
             margin: 0;
             padding: 0;
             color-scheme: var(--tg-color-scheme);
-            padding-bottom: 60px;
+            padding-bottom: 56px;
             /* Space for bottom nav on small screens */
         }
 
@@ -262,7 +262,7 @@
                 text-align: center;
                 margin: 0 5px;
                 gap: 1px;
-                padding: 2px 36px;
+                padding: 4px 36px;
             }
         }
     </style>
@@ -320,7 +320,7 @@
 
     <!-- Content Sections -->
     <section id="home" class="content-section active">
-        <h5 class="text-sm md:text-base font-bold mb-2">version 2.0 beta</h5>
+        <h5 class="text-sm md:text-base font-bold mb-2">version 2.0</h5>
         <h2 class="text-lg font-bold mb-2">Football Schedule Fixtures</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
@@ -797,7 +797,27 @@
     `;
                     card.addEventListener('click', () => {
 
-                        window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                        if (window.Sonar) {
+                            window.Sonar.show({
+                                adUnit: this.rewardId,
+                                onClose: () => {
+                                    window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                                },
+                                onReward: () => {
+                                    window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                                },
+                            }).then((showResult) => {
+                                if (showResult?.status === 'error') {
+                                    window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                                }
+                            }).catch((error) => {
+                                window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                            });
+                        } else {
+                            window.open('https://www.profitableratecpm.com/ewdrwi8p?key=c3f8195dd58a3e2c408fed211cc8ddee', '_blank');
+                            window.location.href = `ch-player.html?url=${encodeURIComponent(channel.url)}&fullscreen=${this.isFullscreen}`;
+                        }
+                        
                     });
                     channelList.appendChild(card);
                 });
