@@ -96,7 +96,7 @@
                                 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
                                 try {
                                     if (tg) {
-                                        if (!isUrlFullscreen) {
+                                        if (!isFullscreen) {
                                             if (!art.fullscreenWeb) {
                                                 await Telegram.WebApp.requestFullscreen(); // Assumes requestFullscreen returns a Promise
                                                 await delay(1000); // 1-second delay
@@ -152,7 +152,7 @@
 
                         (async () => {
                             try {
-                                if (!isUrlFullscreen && !state) {
+                                if (!isFullscreen && !state) {
                                     Telegram.WebApp.exitFullscreen();
                                 }
                             } catch (err) {

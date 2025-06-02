@@ -28,7 +28,7 @@
             margin: 0;
             padding: 0;
             color-scheme: var(--tg-color-scheme);
-            padding-bottom: 74px;
+            padding-bottom: 64px;
             /* Space for bottom nav on small screens */
         }
 
@@ -197,7 +197,7 @@
         .nav-button {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 2px;
             color: var(--tg-theme-text-color, #212121);
             font-size: 14px;
             font-weight: 500;
@@ -243,7 +243,10 @@
         @media (max-width: 639px) {
             .nav-bar-top {
                 display: none;
-                padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 0px);
+            }
+
+            #main {
+                padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 16px);
             }
 
             .nav-bar-bottom {
@@ -252,7 +255,8 @@
 
             .nav-button {
                 flex-direction: column;
-                font-size: 12px;
+                font-size: 10px;
+                font-weight: 500;
                 flex: 1;
                 text-align: center;
                 margin: 0 5px;
@@ -288,7 +292,7 @@
     </nav>
 
     <!-- Fullscreen and Reload Buttons -->
-    <section>
+    <section id="main">
         <div class="flex gap-3 justify-center">
             <button id="fullscreen_btn"
                 class="btn text-sm md:text-base px-4 py-2 rounded-lg shadow-lg button h-auto min-h-[44px] no-hover flex items-center gap-2">
