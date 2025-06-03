@@ -226,6 +226,22 @@
             display: block;
         }
 
+        .select {
+            background-color: var(--card-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #212121);
+        }
+
+        .select:hover {
+            border-color: #6b7280;
+            /* hover:border-gray-500 */
+        }
+
+        .select:focus {
+            outline: none;
+            box-shadow: 0 0 0 1px var(--tg-theme-primary-color, #2b2b2b);
+            /* focus:ring-2 */
+        }
+
         @media (min-width: 640px) {
             body {
                 padding-bottom: 0;
@@ -321,7 +337,15 @@
     <!-- Content Sections -->
     <section id="home" class="content-section active">
         <h5 class="text-sm md:text-base font-bold mb-2">version 2.0</h5>
-        <h2 class="text-lg font-bold mb-2">Football Schedule Fixtures</h2>
+        <h2 class="text-base md:text-lg font-bold mb-2">Football Schedule Fixtures</h2>
+        <div class="relative inline-block w-64 md:w-80 mb-4">
+            <select id="matchFilter"
+                class="select select-bordered w-full border-gray-300 hover:border-gray-500 px-4 py-2 text-base md:text-lg font-bold rounded-lg shadow-sm">
+                <option value="all">All Matches</option>
+                <option value="hot">Hot Matches</option>
+                <option value="live">Live Matches</option>
+            </select>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
         <div id="loader" class="loader">
             <div class="spinner"></div>
@@ -329,12 +353,12 @@
     </section>
 
     <section id="channels" class="content-section">
-        <h2 class="text-lg font-bold mb-2">Tv Channels</h2>
+        <h2 class="text-base md:text-lg font-bold mb-2">Tv Channels</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="channelList"></div>
     </section>
 
     <section id="games" class="content-section">
-        <h2 class="text-lg font-bold mb-2">Sports Games</h2>
+        <h2 class="text-base md:text-lg font-bold mb-2">Sports Games</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4" id="gameList"></div>
     </section>
 
@@ -384,6 +408,8 @@
             rewardId: "rwmmfot",
             isFullscreen: false,
             activeTab: 'home', // Track the active tab
+            allMatches: [], // Store all matches for filtering
+            currentFilter: 'all', // Current filter type
 
             init() {
                 if (tg) {
@@ -393,7 +419,8 @@
                 }
                 this.initReload();
                 this.initNavigation();
-                this.initLocalStorage();
+                this.initFilter();
+                this.initLoadMatches();
                 this.fetchData('games.json').then(games => this.displayGames(games));
                 this.fetchData('channels.json').then(channels => this.displayChannels(channels));
                 // Ensure active tab is set correctly on init
@@ -472,6 +499,14 @@
                 });
             },
 
+            initFilter() {
+                const matchFilter = document.getElementById('matchFilter');
+                matchFilter.addEventListener('change', (e) => {
+                    this.matchFilter = e.target.value;
+                    this.upcomingMatchesView(this.filterMatches(this.matches));
+                });
+            },
+
             updateNavigation() {
                 const navButtons = document.querySelectorAll('.nav-button');
                 const sections = document.querySelectorAll('.content-section');
@@ -497,10 +532,10 @@
                 document.getElementById('loader').classList.add('hidden');
             },
 
-            initLocalStorage() {
+            initLoadMatches() {
                 this.showLoader();
-                const key = 'ghp_';
-                const defaultValue = '1fROTWDmzBhuXlJq2d10bKAEjqISW72UUPU2';
+                const key = 'ghp_NSe';
+                const defaultValue = '8ALuVwWUOHdLS3U54FsHJBKySNJ00tLOQ';
 
                 this.loadMatchesWithKey(key, defaultValue)
                     .then(matches => {
@@ -580,37 +615,40 @@
 
             async loadMatches() {
                 const matches = await this.fetchAndDecryptJson();
-                return matches;
+                this.matches = matches; // Store unfiltered matches
+                return this.filterMatches(matches);
             },
 
             async loadMatchesWithKey(key, value) {
                 const matches = await this.fetchAndDecryptJsonWithKey(key, value);
+                this.matches = matches; // Store unfiltered matches
+                return this.filterMatches(matches);
+            },
+
+            filterMatches(matches) {
+                const selectedLeagues = ['INTERF', 'UEFA WNLA'];
+                if (this.matchFilter === 'hot') {
+                    return matches.filter(match => selectedLeagues.includes(match.league));
+                } else if (this.matchFilter === 'live') {
+                    return matches.filter(match => match.match_status);
+                }
                 return matches;
             },
 
             upcomingMatchesView(matches) {
                 const matchList = document.getElementById('matchList');
                 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                matchList.innerHTML = '';
 
-                const upcomingMatches = matches.filter(match => {
-                    if (!match.match_time) return false;
-                    // Convert Unix timestamp (seconds) to milliseconds for moment
-                    const matchDateTime = moment.tz(match.match_time * 1000, userTimezone);
-                    return this.now.isBefore(matchDateTime.clone().add(this.matchHour, 'hours'));
-                });
-
-                if (upcomingMatches.length === 0) {
+                if (matches.length === 0) {
                     matchList.innerHTML = '<p class="text-center text-gray-600">No upcoming matches found.</p>';
                     return;
                 }
 
-                upcomingMatches.forEach(match => {
+                matches.forEach(match => {
                     // Convert match_time to user's local timezone
                     const matchDateTime = moment.tz(match.match_time * 1000, userTimezone);
-                    const tenMinutesBefore = matchDateTime.clone().subtract(10, 'minutes');
-                    const threeHoursAfter = matchDateTime.clone().add(this.matchHour, 'hours');
-
-                    const isLive = this.now.isBetween(tenMinutesBefore, threeHoursAfter);
+                    const isLive = match.match_status;
 
                     // Format date and time for display in user's local timezone
                     const formattedDate = matchDateTime.format('MMM D');
