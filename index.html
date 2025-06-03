@@ -212,23 +212,23 @@
 
         .skeleton-card {
             background-color: var(--card-bg-color, #ffffff);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 3px rgba(0, 0, 0, 0.24);
             border-radius: 8px;
             padding: 16px;
             animation: pulse 1.5s infinite;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
         }
 
         .skeleton-square {
-            width: 60px;
-            height: 60px;
+            width: 54px;
+            height: 54px;
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             border-radius: 8px;
             animation: shimmer 1.5s infinite;
+            margin-bottom: 2px;
         }
 
         .skeleton-line {
@@ -333,9 +333,10 @@
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList">
             <!-- Skeleton placeholders -->
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -343,13 +344,15 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -357,13 +360,15 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -371,13 +376,15 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -385,13 +392,15 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -399,13 +408,15 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
             <div class="skeleton-container">
-                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                     <div class="col-span-4 flex flex-col items-center home-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                     <div class="col-span-3 flex flex-col items-center match-date match-time">
                         <div class="skeleton-line"></div>
@@ -413,6 +424,7 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center away-name">
                         <div class="skeleton-square"></div>
+                        <div class="skeleton-line"></div>
                     </div>
                 </div>
             </div>
