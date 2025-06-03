@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Matches</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <title>MM FOT</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/daisyui@5.0.43/index.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -324,6 +325,7 @@
 
     <!-- Content Sections -->
     <section id="home" class="content-section active">
+        <h5 class="text-[11px] md:text-[14px] font-bold mb-4 hidden">version 2.0</h5>
         <h2 class="text-base md:text-lg font-bold mb-2">Football Schedule Fixtures</h2>
         <div class="relative inline-block w-3/4 md:w-96 mb-4">
             <select id="matchFilter"
@@ -503,8 +505,8 @@
                 this.initNavigation();
                 this.initFilter();
                 this.initLoadMatches();
-                this.fetchData('games.json').then(games => this.displayGames(games));
-                this.fetchData('channels.json').then(channels => this.displayChannels(channels));
+                this.fetchData('data/games.json').then(games => this.displayGames(games));
+                this.fetchData('data/channels.json').then(channels => this.displayChannels(channels));
                 // Ensure active tab is set correctly on init
                 this.updateNavigation();
                 // Listen for window resize to maintain active tab state

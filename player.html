@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta content="never" name="referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Matches</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <title>MM FOT</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/daisyui@5.0.43/index.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -174,7 +175,7 @@
                 Reload
             </button>
         </div>
-        <img src="/img/info-reload.png" alt="Info" class="w-[240px] md:w-[400px] h-auto mx-auto">
+        <img src="/img/info-reload.png" alt="Info" class="w-3/5 md:w-[400px] h-auto mx-auto">
         <div id="match-detail">
             <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2 shadow-xl items-center">
                 <div class="col-span-4 flex flex-col items-center home-name">
@@ -192,22 +193,7 @@
             </div>
         </div>
         <div id="match-player"></div>
-        <div id="bnmmfot"> </div>
     </section>
-    <script>
-        window.Sonar.show({ adUnit: "bnmmfot" }).then((showResult) => {
-            if (showResult?.status === 'error') {
-                console.error('Ad bnmmfot failed to show');
-                // Optionally hide bnmmfot div if desired
-                document.getElementById('bnmmfot').style.display = 'none';
-            } else {
-                console.log('Ad bnmmfot is showing');
-            }
-        }).catch((error) => {
-            console.error('Error with bnmmfot ad:', error);
-            document.getElementById('bnmmfot').style.display = 'none'; // Hide bnmmfot div on error
-        });
-    </script>
     <script>
         let art;
         const urlParams = new URLSearchParams(window.location.search);
