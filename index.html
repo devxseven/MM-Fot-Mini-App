@@ -50,54 +50,6 @@
             border-radius: 8px;
         }
 
-        @keyframes beat {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-        }
-
-        .animate-beat {
-            animation: beat 1s infinite;
-        }
-
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 20px 0;
-        }
-
-        .loader.hidden {
-            display: none;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid var(--tg-theme-primary-color, #1976d2);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            will-change: transform;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
         .league,
         .home-name,
         .away-name,
@@ -134,36 +86,6 @@
             margin-bottom: 16px;
             width: 100%;
             height: 70px;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .loading-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .loading-overlay .spinner {
-            width: 56px;
-            height: 56px;
-            border: 6px solid rgba(255, 255, 255, 0.3);
-            border-top: 6px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
         }
 
         /* Navigation Bar Styles */
@@ -281,6 +203,69 @@
                 padding: 4px 36px;
             }
         }
+
+        /* Skeleton loading for match list */
+        .skeleton-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-card {
+            background-color: var(--card-bg-color, #ffffff);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            padding: 16px;
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .skeleton-square {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            border-radius: 8px;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .skeleton-line {
+            width: 9rem;
+            /* Equivalent to Tailwind's w-36 */
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            animation: shimmer 1.5s infinite;
+            margin: 4px;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
     </style>
 </head>
 
@@ -338,7 +323,7 @@
     <section id="home" class="content-section active">
         <h5 class="text-sm md:text-base font-bold mb-2">version 2.0</h5>
         <h2 class="text-base md:text-lg font-bold mb-2">Football Schedule Fixtures</h2>
-        <div class="relative inline-block w-64 md:w-80 mb-4">
+        <div class="relative inline-block w-3/4 md:w-96 mb-4">
             <select id="matchFilter"
                 class="select select-bordered w-full border-gray-300 hover:border-gray-500 px-4 py-2 text-base md:text-lg font-bold rounded-lg shadow-sm">
                 <option value="all">All Matches</option>
@@ -346,9 +331,92 @@
                 <option value="live">Live Matches</option>
             </select>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList"></div>
-        <div id="loader" class="loader">
-            <div class="spinner"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="matchList">
+            <!-- Skeleton placeholders -->
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-container">
+                <div class="skeleton-card grid grid-cols-11 gap-2 w-full mt-2">
+                    <div class="col-span-4 flex flex-col items-center home-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                    <div class="col-span-3 flex flex-col items-center match-date match-time">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="col-span-4 flex flex-col items-center away-name">
+                        <div class="skeleton-square"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -524,35 +592,23 @@
                 document.getElementById(this.activeTab).classList.add('active');
             },
 
-            showLoader() {
-                document.getElementById('loader').classList.remove('hidden');
-            },
-
-            hideLoader() {
-                document.getElementById('loader').classList.add('hidden');
-            },
-
             initLoadMatches() {
-                this.showLoader();
                 const key = 'ghp_NSe';
                 const defaultValue = '8ALuVwWUOHdLS3U54FsHJBKySNJ00tLOQ';
 
                 this.loadMatchesWithKey(key, defaultValue)
                     .then(matches => {
                         this.upcomingMatchesView(matches);
-                        this.hideLoader();
                     })
                     .catch(error => {
                         console.warn('loadMatchesWithKey failed, attempting loadMatches:', error);
                         this.loadMatches()
                             .then(matches => {
                                 this.upcomingMatchesView(matches);
-                                this.hideLoader();
                             })
                             .catch(fallbackError => {
                                 console.error('loadMatches failed:', fallbackError);
                                 document.getElementById('matchList').innerHTML = '<p class="text-center text-red-500">Unable to load matches. Please try again later.</p>';
-                                this.hideLoader();
                             });
                     });
             },
@@ -626,7 +682,10 @@
             },
 
             filterMatches(matches) {
-                const selectedLeagues = ['INTERF', 'UEFA WNLA'];
+                const selectedLeagues = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1', 'MLS',
+                    'UEFA Champions League', 'UEFA Europa League', 'UEFA Nations League', 'Saudi Pro League', 'UEFA Conference League',
+                    'Coppa Italia', 'FA Cup', 'Copa del Rey', 'AFC Champions League Elite', 'Concacaf Champions Cup',
+                    'World Cup qualification (AFC)', 'World Cup qualification (CONMEBOL)', 'AFC Asian Cup qualification'];
                 if (this.matchFilter === 'hot') {
                     return matches.filter(match => selectedLeagues.includes(match.league));
                 } else if (this.matchFilter === 'live') {
@@ -660,7 +719,7 @@
                         <h2 class="text-xs md:text-sm p-1 font-bold text-center league">${match.league || ''}</h2>
                         <div class="grid grid-cols-11 gap-2 w-full text-center mt-2">
                             <div class="col-span-4 flex flex-col items-center home-name">
-                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <img src="${match.home_img || ''}" alt="Home Team" class="w-12 h-12 object-cover" loading="lazy" onerror="this.src='default-image.png'">
                                 <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.home_name || ''}</p>
                             </div>
                             <div class="col-span-3 flex flex-col items-center match-date match-time">
@@ -669,7 +728,7 @@
                                 ${isLive ? '<p class="text-xs md:text-sm text-red-500 font-bold animate-beat">⬤ LIVE</p>' : ''}
                             </div>
                             <div class="col-span-4 flex flex-col items-center away-name">
-                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-contain" onerror="this.src='default-image.png'">
+                                <img src="${match.away_img || ''}" alt="Away Team" class="w-12 h-12 object-cover" loading="lazy" onerror="this.src='default-image.png'">
                                 <p class="text-[9px] md:text-[11px] pt-1 font-semibold">${match.away_name || ''}</p>
                             </div>
                         </div>
